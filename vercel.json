@@ -1,23 +1,9 @@
 {
   "version": 2,
-  "builds": [
+  "rewrites": [
     {
-      "src": "api/**/*.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "public/**",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/",
-      "dest": "/public/index.html"
-    },
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
+      "source": "/",
+      "destination": "/public/index.html"
     }
   ],
   "headers": [
@@ -35,6 +21,10 @@
         {
           "key": "Access-Control-Allow-Headers",
           "value": "Content-Type"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "s-maxage=900, stale-while-revalidate"
         }
       ]
     }
