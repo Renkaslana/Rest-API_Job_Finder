@@ -1,0 +1,29 @@
+{
+  "name": "job-finder-api",
+  "version": "2.0.0",
+  "description": "REST API dengan on-request scraping untuk metadata lowongan kerja (Vercel Serverless)",
+  "main": "api/jobs.js",
+  "scripts": {
+    "dev": "node test-server.js",
+    "dev:vercel": "vercel dev",
+    "test": "node test/test-scraper.js"
+  },
+  "keywords": [
+    "job",
+    "api",
+    "rest",
+    "scraping",
+    "serverless",
+    "vercel",
+    "cheerio"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.12",
+    "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {
+    "vercel": "^33.0.0"
+  }
+}
