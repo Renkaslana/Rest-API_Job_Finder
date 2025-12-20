@@ -283,7 +283,7 @@
                 <h2 style="color: #667eea; margin-bottom: 10px;">📊 API Statistics</h2>
                 <div class="stats-grid">
                     <div class="stat-item">
-                        <div class="stat-number">7</div>
+                        <div class="stat-number">9</div>
                         <div class="stat-label">Endpoints</div>
                     </div>
                     <div class="stat-item">
@@ -306,7 +306,48 @@
 
                 <h3 style="margin: 30px 0 15px 0; color: #667eea;">🔍 Job Search & Listing</h3>
                 
-                <!-- Endpoint 1: List Jobs (Updated) -->
+                <!-- Endpoint 1: All Jobs (NEW!) -->
+                <div class="endpoint-card" onclick="window.open(getBaseUrl() + '/api/jobs/all?page=1', '_blank')">
+                    <div class="endpoint-header">
+                        <span class="method">GET</span>
+                        <span class="endpoint-url">/api/jobs/all</span>
+                    </div>
+                    <div class="endpoint-desc">
+                        🆕 <strong>NEW!</strong> Get all available jobs from JobStreet - Perfect for Home screen
+                    </div>
+                    <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 5px; font-size: 0.85em;">
+                        <strong>Query Parameters:</strong><br>
+                        • <code style="color: #667eea;">page</code> - Page number (default: 1)<br><br>
+                        <strong>Response includes:</strong><br>
+                        • Jobs list (30 jobs per page)<br>
+                        • Dynamic classifications with counts<br>
+                        • Metadata (totalJobs, page, source)<br><br>
+                        <strong>Example:</strong><br>
+                        <code style="color: #667eea;">/api/jobs/all?page=1</code><br><br>
+                        <strong>Use Case:</strong> Home screen initial job listing
+                    </div>
+                </div>
+
+                <!-- Endpoint 2: Latest Jobs (NEW!) -->
+                <div class="endpoint-card" onclick="window.open(getBaseUrl() + '/api/jobs/latest?page=1', '_blank')">
+                    <div class="endpoint-header">
+                        <span class="method">GET</span>
+                        <span class="endpoint-url">/api/jobs/latest</span>
+                    </div>
+                    <div class="endpoint-desc">
+                        🆕 <strong>NEW!</strong> Get latest/newest job postings (may return sample data)
+                    </div>
+                    <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 5px; font-size: 0.85em;">
+                        <strong>Query Parameters:</strong><br>
+                        • <code style="color: #667eea;">page</code> - Page number (default: 1)<br><br>
+                        <strong>⚠️ Note:</strong> This endpoint may return sample data due to scraping limitations.<br>
+                        <strong>Recommended Alternative:</strong> Use <code>/api/jobs/all</code> and sort by posted_date client-side.<br><br>
+                        <strong>Example:</strong><br>
+                        <code style="color: #667eea;">/api/jobs/latest?page=1</code>
+                    </div>
+                </div>
+                
+                <!-- Endpoint 3: List Jobs (Updated) -->
                 <div class="endpoint-card" onclick="window.open(getBaseUrl() + '/api/jobs?limit=20&sort=salary&salary=true', '_blank')">
                     <div class="endpoint-header">
                         <span class="method">GET</span>
@@ -325,31 +366,35 @@
                     </div>
                 </div>
 
-                <!-- Endpoint 2: Search & Filter Jobs (Updated) -->
-                <div class="endpoint-card" onclick="window.open(getBaseUrl() + '/api/search?q=developer&category=IT&location=Jakarta&salaryMin=5000000&sort=salary&page=1', '_blank')">
+                <!-- Endpoint 4: Search & Filter Jobs (Updated) -->
+                <div class="endpoint-card" onclick="window.open(getBaseUrl() + '/api/search?location=Tegal&category=IT%20%26%20Teknologi', '_blank')">
                     <div class="endpoint-header">
                         <span class="method">GET</span>
                         <span class="endpoint-url">/api/search</span>
                     </div>
                     <div class="endpoint-desc">
-                        ✨ <strong>ENHANCED!</strong> Advanced search & filter dengan pagination
+                        🔥 <strong>RECOMMENDED!</strong> Location-first search dengan dynamic classifications
                     </div>
                     <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 5px; font-size: 0.85em;">
                         <strong>Query Parameters:</strong><br>
-                        • <code style="color: #667eea;">q</code> - Keyword search (title, company, description)<br>
-                        • <code style="color: #667eea;">category</code> - Filter by category (IT, Marketing, Design, etc)<br>
-                        • <code style="color: #667eea;">location</code> - Filter by location (Jakarta, Bandung, etc)<br>
-                        • <code style="color: #667eea;">salaryMin</code> - Minimum salary (numeric)<br>
-                        • <code style="color: #667eea;">jobType</code> - Job type (full-time, part-time, contract, internship)<br>
-                        • <code style="color: #667eea;">sort</code> - Sort: latest, salary, relevance<br>
-                        • <code style="color: #667eea;">page</code> - Page number (default: 1)<br>
-                        • <code style="color: #667eea;">limit</code> - Results per page (default: 30, max: 100)<br><br>
-                        <strong>Example:</strong><br>
-                        <code style="color: #667eea;">/api/search?q=developer&category=IT&salaryMin=5000000&sort=salary</code>
+                        • <code style="color: #667eea;">location</code> - Location (PRIMARY, e.g., Tegal, Jakarta, Jawa Tengah)<br>
+                        • <code style="color: #667eea;">q</code> - Keyword (job title, skill)<br>
+                        • <code style="color: #667eea;">category</code> - Classification filter (from dynamic classifications)<br>
+                        • <code style="color: #667eea;">page</code> - Page number (default: 1)<br><br>
+                        <strong>Response Structure:</strong><br>
+                        • <code style="color: #667eea;">query</code> - Search parameters used<br>
+                        • <code style="color: #667eea;">meta</code> - Total jobs, source, timestamp<br>
+                        • <code style="color: #667eea;">classifications</code> - Dynamic categories with counts<br>
+                        • <code style="color: #667eea;">jobs</code> - Job listings<br><br>
+                        <strong>Examples:</strong><br>
+                        <code style="color: #667eea;">/api/search?location=Tegal</code><br>
+                        <code style="color: #667eea;">/api/search?location=Tegal&q=developer</code><br>
+                        <code style="color: #667eea;">/api/search?location=Tegal&category=IT%20%26%20Teknologi</code><br><br>
+                        <strong>Use Case:</strong> Advanced search with dynamic filtering
                     </div>
                 </div>
 
-                <!-- Endpoint 3: Get Available Filters -->
+                <!-- Endpoint 5: Get Available Filters -->
                 <div class="endpoint-card" onclick="window.open(getBaseUrl() + '/api/filters', '_blank')">
                     <div class="endpoint-header">
                         <span class="method">GET</span>
