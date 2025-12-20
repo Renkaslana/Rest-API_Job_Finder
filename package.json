@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "node test-server.js",
     "dev:vercel": "vercel dev",
-    "test": "node test/test-scraper.js"
+    "test": "node test/test-scraper.js",
+    "test:search": "node quick-test-search.js",
+    "test:all": "node test/test-search.js"
   },
   "keywords": [
     "job",

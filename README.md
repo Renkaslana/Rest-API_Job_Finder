@@ -49,6 +49,8 @@ vercel --prod
 
 ### GET /api/jobs
 
+Get all available job listings (no filters).
+
 **Live Example:**
 ```
 https://your-project.vercel.app/api/jobs
@@ -70,9 +72,11 @@ https://your-project.vercel.app/api/jobs
         "job_title": "Full Stack Developer",
         "company": "PT Tech Indonesia",
         "location": "Jakarta",
+        "category": "IT",
         "posted_date": "2 hari lalu",
-        "source_name": "Kalibrr",
-        "source_url": "https://www.kalibrr.com/id-ID/job/12345"
+        "description": "We are looking for...",
+        "source_name": "JobStreet Indonesia",
+        "source_url": "https://id.jobstreet.com/id/job/12345"
       }
     ],
     "metadata": {
@@ -80,6 +84,116 @@ https://your-project.vercel.app/api/jobs
       "scraping_method": "on-request",
       "cache_duration": "15 minutes"
     }
+  }
+}
+```
+
+---
+
+### GET /api/search
+
+Search and filter jobs by keyword, category, and location.
+
+**Query Parameters:**
+- `q` (string): Search keyword (job title, company, description)
+- `category` (string): Filter by category (IT, Marketing, Design, etc)
+- `location` (string): Filter by location (Jakarta, Bandung, etc)
+- `limit` (number): Limit results (default: 30, max: 100)
+
+**Live Examples:**
+```
+# Search by keyword
+https://your-project.vercel.app/api/search?q=developer
+
+# Filter by category
+https://your-project.vercel.app/api/search?category=IT
+
+# Filter by location
+https://your-project.vercel.app/api/search?location=Jakarta
+
+# Combine filters
+https://your-project.vercel.app/api/search?q=programmer&category=IT&location=Jakarta&limit=20
+```
+
+**Response Format:**
+```json
+{
+  "status": "success",
+  "message": "Found 12 jobs matching your criteria",
+  "data": {
+    "jobs": [...],
+    "metadata": {
+      "total": 12,
+      "total_before_limit": 12,
+      "filters_applied": {
+        "keyword": "developer",
+        "category": "IT",
+        "location": "Jakarta"
+      }
+    }
+  }
+}
+```
+
+---
+
+### GET /api/filters
+
+Get available categories and locations for filtering.
+
+**Live Example:**
+```
+https://your-project.vercel.app/api/filters
+```
+
+**Response Format:**
+```json
+{
+  "status": "success",
+  "data": {
+    "categories": [
+      { "name": "IT", "count": 45 },
+      { "name": "Marketing", "count": 23 },
+      { "name": "Design", "count": 15 }
+    ],
+    "locations": ["Jakarta", "Bandung", "Surabaya", "Semarang"],
+    "metadata": {
+      "total_jobs_analyzed": 100,
+      "total_categories": 12,
+      "total_locations": 15
+    }
+  }
+}
+```
+
+---
+
+### GET /api/job
+
+Get full job details including complete description.
+
+**Query Parameters:**
+- `url` (required): JobStreet job URL
+
+**Live Example:**
+```
+https://your-project.vercel.app/api/job?url=https://id.jobstreet.com/id/job/12345
+```
+
+**Response Format:**
+```json
+{
+  "status": "success",
+  "data": {
+    "job_title": "Senior Full Stack Developer",
+    "company": "PT Teknologi Indonesia",
+    "location": "Jakarta Selatan",
+    "salary_range": "Rp 8.000.000 - Rp 12.000.000 per month",
+    "job_type": "Full Time",
+    "posted_date": "2 hari yang lalu",
+    "description": "Full job description...",
+    "requirements": ["Bachelor degree...", "3+ years experience..."],
+    "source_url": "https://id.jobstreet.com/id/job/12345"
   }
 }
 ```
