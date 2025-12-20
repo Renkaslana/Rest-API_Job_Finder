@@ -280,58 +280,72 @@
             </div>
 
             <div class="stats">
-                <h2 style="color: #667eea; margin-bottom: 10px;">📊 Statistics</h2>
+                <h2 style="color: #667eea; margin-bottom: 10px;">📊 API Statistics</h2>
                 <div class="stats-grid">
                     <div class="stat-item">
-                        <div class="stat-number">4</div>
+                        <div class="stat-number">7</div>
                         <div class="stat-label">Endpoints</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-number">30+</div>
-                        <div class="stat-label">Jobs per Request</div>
+                        <div class="stat-label">Jobs/Request</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-number">15 min</div>
-                        <div class="stat-label">Cache Duration</div>
+                        <div class="stat-number">3</div>
+                        <div class="stat-label">Career Articles</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-number">100%</div>
-                        <div class="stat-label">Free</div>
+                        <div class="stat-label">Free API</div>
                     </div>
                 </div>
             </div>
 
             <div class="section">
                 <h2>📚 API Endpoints</h2>
+
+                <h3 style="margin: 30px 0 15px 0; color: #667eea;">🔍 Job Search & Listing</h3>
                 
-                <!-- Endpoint 1: List Jobs -->
-                <div class="endpoint-card" onclick="window.open(getBaseUrl() + '/api/jobs', '_blank')">
+                <!-- Endpoint 1: List Jobs (Updated) -->
+                <div class="endpoint-card" onclick="window.open(getBaseUrl() + '/api/jobs?limit=20&sort=salary&salary=true', '_blank')">
                     <div class="endpoint-header">
                         <span class="method">GET</span>
                         <span class="endpoint-url">/api/jobs</span>
                     </div>
                     <div class="endpoint-desc">
-                        Mendapatkan daftar 30 lowongan kerja terbaru dengan preview deskripsi
+                        ✨ <strong>ENHANCED!</strong> Recommended jobs untuk Home screen dengan filter options
+                    </div>
+                    <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 5px; font-size: 0.85em;">
+                        <strong>Query Parameters:</strong><br>
+                        • <code style="color: #667eea;">limit</code> - Number of jobs (default: 30, max: 100)<br>
+                        • <code style="color: #667eea;">sort</code> - Sort order: latest (default), salary<br>
+                        • <code style="color: #667eea;">salary</code> - Filter only jobs with salary (true/false)<br><br>
+                        <strong>Example:</strong><br>
+                        <code style="color: #667eea;">/api/jobs?limit=20&sort=salary&salary=true</code>
                     </div>
                 </div>
 
-                <!-- Endpoint 2: Search & Filter Jobs -->
-                <div class="endpoint-card" onclick="window.open(getBaseUrl() + '/api/search?q=developer&category=IT&location=Jakarta', '_blank')">
+                <!-- Endpoint 2: Search & Filter Jobs (Updated) -->
+                <div class="endpoint-card" onclick="window.open(getBaseUrl() + '/api/search?q=developer&category=IT&location=Jakarta&salaryMin=5000000&sort=salary&page=1', '_blank')">
                     <div class="endpoint-header">
                         <span class="method">GET</span>
                         <span class="endpoint-url">/api/search</span>
                     </div>
                     <div class="endpoint-desc">
-                        🆕 <strong>NEW!</strong> Cari dan filter lowongan berdasarkan keyword, kategori, dan lokasi
+                        ✨ <strong>ENHANCED!</strong> Advanced search & filter dengan pagination
                     </div>
                     <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 5px; font-size: 0.85em;">
                         <strong>Query Parameters:</strong><br>
-                        • <code style="color: #667eea;">q</code> - Keyword search (job title, company, description)<br>
-                        • <code style="color: #667eea;">category</code> - Filter by category (IT, Marketing, Design, dll)<br>
-                        • <code style="color: #667eea;">location</code> - Filter by location (Jakarta, Bandung, dll)<br>
-                        • <code style="color: #667eea;">limit</code> - Limit results (default: 30, max: 100)<br><br>
-                        <strong>Contoh:</strong><br>
-                        <code style="color: #667eea;">/api/search?q=developer&category=IT&location=Jakarta&limit=20</code>
+                        • <code style="color: #667eea;">q</code> - Keyword search (title, company, description)<br>
+                        • <code style="color: #667eea;">category</code> - Filter by category (IT, Marketing, Design, etc)<br>
+                        • <code style="color: #667eea;">location</code> - Filter by location (Jakarta, Bandung, etc)<br>
+                        • <code style="color: #667eea;">salaryMin</code> - Minimum salary (numeric)<br>
+                        • <code style="color: #667eea;">jobType</code> - Job type (full-time, part-time, contract, internship)<br>
+                        • <code style="color: #667eea;">sort</code> - Sort: latest, salary, relevance<br>
+                        • <code style="color: #667eea;">page</code> - Page number (default: 1)<br>
+                        • <code style="color: #667eea;">limit</code> - Results per page (default: 30, max: 100)<br><br>
+                        <strong>Example:</strong><br>
+                        <code style="color: #667eea;">/api/search?q=developer&category=IT&salaryMin=5000000&sort=salary</code>
                     </div>
                 </div>
 
@@ -342,12 +356,7 @@
                         <span class="endpoint-url">/api/filters</span>
                     </div>
                     <div class="endpoint-desc">
-                        🆕 <strong>NEW!</strong> Mendapatkan daftar kategori dan lokasi yang tersedia untuk filter
-                    </div>
-                    <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 5px; font-size: 0.85em;">
-                        <strong>Response includes:</strong><br>
-                        • List kategori dengan jumlah job (IT: 45, Marketing: 23, dll)<br>
-                        • List lokasi yang tersedia (Jakarta, Bandung, Surabaya, dll)
+                        Get available filter options (categories & locations)
                     </div>
                 </div>
 
@@ -358,13 +367,59 @@
                         <span class="endpoint-url">/api/job?url=&lt;jobstreet_url&gt;</span>
                     </div>
                     <div class="endpoint-desc">
-                        Mendapatkan detail lengkap 1 job dengan deskripsi penuh (2000+ karakter)
+                        Get full job detail dengan deskripsi lengkap
                     </div>
                     <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 5px; font-size: 0.85em;">
-                        <strong>Contoh:</strong><br>
-                        <code style="color: #667eea;">/api/job?url=https%3A%2F%2Fid.jobstreet.com%2Fid%2Fjob%2F12345678</code>
+                        <strong>Example:</strong><br>
+                        <code style="color: #667eea;">/api/job?url=https%3A%2F%2Fid.jobstreet.com%2Fid%2Fjob%2F...</code>
                     </div>
                 </div>
+
+                <h3 style="margin: 40px 0 15px 0; color: #667eea;">📰 Career Articles (NEW!)</h3>
+
+                <!-- Endpoint 5: Articles List -->
+                <div class="endpoint-card" onclick="window.open(getBaseUrl() + '/api/articles?category=career-development&limit=10', '_blank')">
+                    <div class="endpoint-header">
+                        <span class="method">GET</span>
+                        <span class="endpoint-url">/api/articles</span>
+                    </div>
+                    <div class="endpoint-desc">
+                        🆕 <strong>NEW!</strong> Get career advice articles list (original content)
+                    </div>
+                    <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 5px; font-size: 0.85em;">
+                        <strong>Query Parameters:</strong><br>
+                        • <code style="color: #667eea;">category</code> - Filter by category (career-development, salary-advice, workplace-wellbeing)<br>
+                        • <code style="color: #667eea;">page</code> - Page number (default: 1)<br>
+                        • <code style="color: #667eea;">limit</code> - Articles per page (default: 10, max: 50)<br><br>
+                        <strong>Example:</strong><br>
+                        <code style="color: #667eea;">/api/articles?category=salary-advice&limit=5</code><br><br>
+                        <strong>Available Categories:</strong> career-development, salary-advice, workplace-wellbeing
+                    </div>
+                </div>
+
+                <!-- Endpoint 6: Article Detail -->
+                <div class="endpoint-card" onclick="window.open(getBaseUrl() + '/api/articles/tips-interview-kerja-sukses', '_blank')">
+                    <div class="endpoint-header">
+                        <span class="method">GET</span>
+                        <span class="endpoint-url">/api/articles/[id]</span>
+                    </div>
+                    <div class="endpoint-desc">
+                        🆕 <strong>NEW!</strong> Get full article content dengan block-based structure
+                    </div>
+                    <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 5px; font-size: 0.85em;">
+                        <strong>Content Blocks:</strong><br>
+                        • <code style="color: #667eea;">paragraph</code> - Text paragraph<br>
+                        • <code style="color: #667eea;">heading</code> - Section heading<br>
+                        • <code style="color: #667eea;">bulletList</code> - List items<br>
+                        • <code style="color: #667eea;">image</code> - Image with caption<br>
+                        • <code style="color: #667eea;">highlight</code> - Highlighted text<br><br>
+                        <strong>Example:</strong><br>
+                        <code style="color: #667eea;">/api/articles/tips-interview-kerja-sukses</code><br>
+                        <code style="color: #667eea;">/api/articles/negosiasi-gaji-efektif</code>
+                    </div>
+                </div>
+
+                <!-- Endpoint 7: Article Categories (deprecated, removed) -->
             </div>
 
             <div class="section">

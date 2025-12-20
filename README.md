@@ -1,14 +1,21 @@
-# Job Finder API v2.0
+# Job Finder API v2.1
 
-REST API dengan **on-request scraping** untuk metadata lowongan kerja, mirip konsep [Sanka Anime API](https://www.sankavollerei.com/anime/).
+REST API untuk job listings dan career articles dengan **on-request scraping** dan **static content management**.
 
-## 🎯 Konsep
+## 🎯 Features
 
-- ✅ **On-Request Scraping**: Data di-fetch real-time saat endpoint diakses
-- ✅ **Metadata Only**: Hanya scrape info publik (title, company, location, date)
-- ✅ **Serverless**: Deploy ke Vercel, auto-scale, zero maintenance
-- ✅ **Cache Strategy**: CDN caching 15 menit untuk efisiensi
-- ✅ **No Database**: Stateless, data fresh dari sumber
+### 🔍 Job Search
+- ✅ **Real-time Scraping**: Fresh job data dari JobStreet Indonesia
+- ✅ **Advanced Filters**: Keyword, category, location, salary, job type
+- ✅ **Smart Sorting**: Latest, salary, relevance
+- ✅ **Pagination**: Efficient data loading
+- ✅ **15 min Cache**: Fast response dengan CDN caching
+
+### 📰 Career Articles (NEW!)
+- ✅ **Original Content**: Career tips & advice articles
+- ✅ **Block-based Structure**: Paragraphs, headings, lists, images, highlights
+- ✅ **Categories**: Career development, salary advice, workplace wellbeing
+- ✅ **24 hour Cache**: Static content dengan long-term caching
 
 ## 🚀 Quick Start
 
@@ -47,7 +54,219 @@ vercel --prod
 
 ## 📡 API Endpoints
 
+### 🔍 Job Endpoints
+
 ### GET /api/jobs
+
+**Description**: Get recommended jobs for home screen
+
+**Query Parameters**:
+- `limit` (number): Results to return (default: 30, max: 100)
+- `sort` (string): Sort order - `latest` (default) or `salary`
+- `salary` (boolean): Filter only jobs with salary info (`true`/`false`)
+
+**Example**:
+```
+GET /api/jobs?limit=20&sort=salary&salary=true
+```
+
+**Response**:
+```json
+{
+  "status": "success",
+  "data": {
+    "jobs": [...],
+    "metadata": {
+      "total": 20,
+      "filters_applied": {
+        "limit": 20,
+        "sort": "salary",
+        "only_with_salary": true
+      }
+    }
+  }
+}
+```
+
+---
+
+### GET /api/search
+
+**Description**: Advanced job search with multiple filters
+
+**Query Parameters**:
+- `q` (string): Search keyword (title, company, description)
+- `category` (string): Job category (IT, Marketing, Design, etc)
+- `location` (string): Location filter (Jakarta, Bandung, etc)
+- `salaryMin` (number): Minimum salary filter
+- `jobType` (string): Job type - `full-time`, `part-time`, `contract`, `internship`, `freelance`
+- `sort` (string): Sort order - `latest` (default), `salary`, `relevance`
+- `page` (number): Page number (default: 1)
+- `limit` (number): Results per page (default: 30, max: 100)
+
+**Example**:
+```
+GET /api/search?q=developer&category=IT&location=Jakarta&salaryMin=5000000&sort=salary&page=1
+```
+
+**Response**:
+```json
+{
+  "status": "success",
+  "message": "Found 45 jobs matching your criteria",
+  "data": {
+    "jobs": [...],
+    "metadata": {
+      "total_results": 45,
+      "page": 1,
+      "limit": 30,
+      "total_pages": 2,
+      "has_next": true,
+      "has_previous": false,
+      "sort_by": "salary",
+      "filters_applied": {
+        "keyword": "developer",
+        "category": "IT",
+        "location": "Jakarta",
+        "salaryMin": "5000000"
+      }
+    }
+  }
+}
+```
+
+---
+
+### GET /api/job
+
+**Description**: Get full job detail
+
+**Query Parameters**:
+- `url` (string, required): JobStreet job URL (URL-encoded)
+
+**Example**:
+```
+GET /api/job?url=https%3A%2F%2Fid.jobstreet.com%2Fid%2Fjob%2F12345678
+```
+
+---
+
+### 📰 Article Endpoints (NEW!)
+
+### GET /api/articles
+
+**Description**: Get career advice articles list
+
+**Query Parameters**:
+- `category` (string): Filter by category
+  - `career-development`
+  - `salary-advice`
+  - `workplace-wellbeing`
+- `page` (number): Page number (default: 1)
+- `limit` (number): Articles per page (default: 10, max: 50)
+
+**Example**:
+```
+GET /api/articles?category=salary-advice&limit=10
+```
+
+**Response**:
+```json
+{
+  "status": "success",
+  "data": {
+    "articles": [
+      {
+        "id": "negosiasi-gaji-efektif",
+        "title": "Cara Negosiasi Gaji yang Efektif untuk Fresh Graduate",
+        "summary": "Negosiasi gaji sering kali menjadi momen yang awkward...",
+        "coverImage": "https://...",
+        "category": "salary-advice",
+        "readTime": "6 min",
+        "publishedAt": "2024-12-10T14:30:00Z",
+        "author": "Job Finder Editorial Team"
+      }
+    ],
+    "metadata": {
+      "total_results": 3,
+      "page": 1,
+      "total_pages": 1,
+      "disclaimer": "Original content for educational purposes"
+    }
+  }
+}
+```
+
+---
+
+### GET /api/articles/[id]
+
+**Description**: Get full article content with block-based structure
+
+**Path Parameters**:
+- `id` (string, required): Article ID
+
+**Example**:
+```
+GET /api/articles/tips-interview-kerja-sukses
+GET /api/articles/negosiasi-gaji-efektif
+GET /api/articles/work-life-balance-tips
+```
+
+**Response**:
+```json
+{
+  "status": "success",
+  "data": {
+    "article": {
+      "id": "tips-interview-kerja-sukses",
+      "title": "10 Tips Interview Kerja yang Akan Membuat Anda Sukses",
+      "summary": "Panduan lengkap mempersiapkan diri...",
+      "coverImage": "https://...",
+      "category": "career-development",
+      "readTime": "8 min",
+      "publishedAt": "2024-12-15T10:00:00Z",
+      "author": "Job Finder Editorial Team",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Interview kerja adalah momen krusial..."
+        },
+        {
+          "type": "heading",
+          "text": "1. Riset Mendalam tentang Perusahaan"
+        },
+        {
+          "type": "bulletList",
+          "items": ["Kunjungi website resmi", "Baca berita terbaru", ...]
+        },
+        {
+          "type": "image",
+          "url": "https://...",
+          "caption": "Persiapan yang matang adalah kunci"
+        },
+        {
+          "type": "highlight",
+          "text": "Ingat: Interview adalah komunikasi dua arah..."
+        }
+      ]
+    },
+    "metadata": {
+      "content_blocks": 25,
+      "content_types": ["paragraph", "heading", "bulletList", "image", "highlight"]
+    }
+  }
+}
+```
+
+**Content Block Types**:
+- `paragraph`: Plain text paragraph
+- `heading`: Section heading
+- `bulletList`: List with `items` array
+- `image`: Image with `url` and optional `caption`
+- `highlight`: Highlighted/quoted text
+
+---
 
 Get all available job listings (no filters).
 

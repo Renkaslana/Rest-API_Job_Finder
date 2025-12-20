@@ -1,0 +1,460 @@
+{
+  "articles": [
+    {
+      "id": "tips-interview-kerja-sukses",
+      "title": "10 Tips Interview Kerja yang Akan Membuat Anda Sukses",
+      "summary": "Panduan lengkap mempersiapkan diri menghadapi interview kerja. Dari riset perusahaan hingga pertanyaan yang harus disiapkan, semua ada di sini.",
+      "coverImage": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&q=80",
+      "category": "career-development",
+      "readTime": "8 min",
+      "publishedAt": "2024-12-15T10:00:00Z",
+      "author": "Job Finder Editorial Team",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Interview kerja adalah momen krusial yang menentukan apakah Anda akan mendapatkan pekerjaan impian atau tidak. Persiapan yang matang adalah kunci sukses dalam menghadapi interview. Berikut adalah 10 tips yang akan membantu Anda tampil percaya diri dan profesional."
+        },
+        {
+          "type": "heading",
+          "text": "1. Riset Mendalam tentang Perusahaan"
+        },
+        {
+          "type": "paragraph",
+          "text": "Sebelum interview, luangkan waktu untuk mempelajari profil perusahaan, visi misi, produk/layanan, dan berita terbaru tentang perusahaan. Hal ini menunjukkan keseriusan Anda dan membantu Anda menjawab pertanyaan dengan lebih relevan."
+        },
+        {
+          "type": "bulletList",
+          "items": [
+            "Kunjungi website resmi perusahaan",
+            "Baca artikel berita tentang perusahaan",
+            "Cek profil LinkedIn perusahaan dan interviewer",
+            "Pahami produk atau layanan yang ditawarkan",
+            "Pelajari culture dan values perusahaan"
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "2. Persiapkan Jawaban untuk Pertanyaan Umum"
+        },
+        {
+          "type": "paragraph",
+          "text": "Ada beberapa pertanyaan yang hampir selalu muncul dalam interview. Siapkan jawaban yang jujur, spesifik, dan menunjukkan value Anda."
+        },
+        {
+          "type": "bulletList",
+          "items": [
+            "Ceritakan tentang diri Anda",
+            "Apa kelebihan dan kekurangan Anda?",
+            "Mengapa Anda tertarik dengan posisi ini?",
+            "Mengapa kami harus memilih Anda?",
+            "Apa ekspektasi gaji Anda?"
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "3. Gunakan Metode STAR"
+        },
+        {
+          "type": "paragraph",
+          "text": "Untuk pertanyaan behavioral (\"Ceritakan pengalaman ketika...\"), gunakan metode STAR: Situation (situasi), Task (tugas), Action (tindakan), Result (hasil). Ini membantu Anda menjawab secara terstruktur dan konkret."
+        },
+        {
+          "type": "highlight",
+          "text": "Contoh: \"Ketika saya menjadi project lead (Situation), tim mengalami deadline yang ketat (Task). Saya membagi tugas berdasarkan strength masing-masing dan melakukan daily standup (Action). Hasilnya, project selesai 2 hari lebih cepat dari deadline (Result).\""
+        },
+        {
+          "type": "heading",
+          "text": "4. Dress Code yang Tepat"
+        },
+        {
+          "type": "paragraph",
+          "text": "Penampilan first impression yang sangat penting. Sesuaikan dress code dengan culture perusahaan - formal untuk perusahaan korporat, smart casual untuk startup."
+        },
+        {
+          "type": "heading",
+          "text": "5. Datang Tepat Waktu"
+        },
+        {
+          "type": "paragraph",
+          "text": "Usahakan datang 10-15 menit lebih awal. Ini menunjukkan profesionalisme dan memberi waktu untuk menenangkan diri. Untuk interview online, test koneksi internet dan aplikasi video call 30 menit sebelumnya."
+        },
+        {
+          "type": "image",
+          "url": "https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=800&q=80",
+          "caption": "Persiapan yang matang adalah kunci sukses interview"
+        },
+        {
+          "type": "heading",
+          "text": "6. Body Language yang Positif"
+        },
+        {
+          "type": "paragraph",
+          "text": "Komunikasi non-verbal sangat penting. Jaga kontak mata, duduk tegak, dan tunjukkan antusiasme melalui ekspresi wajah dan gestur tangan."
+        },
+        {
+          "type": "heading",
+          "text": "7. Siapkan Pertanyaan untuk Interviewer"
+        },
+        {
+          "type": "paragraph",
+          "text": "Di akhir interview, biasanya Anda diberi kesempatan bertanya. Ini adalah momen untuk menunjukkan ketertarikan Anda terhadap posisi dan perusahaan."
+        },
+        {
+          "type": "bulletList",
+          "items": [
+            "Bagaimana kesuksesan diukur di posisi ini?",
+            "Seperti apa kultur tim di sini?",
+            "Apa tantangan terbesar di posisi ini?",
+            "Bagaimana jalur karir untuk posisi ini?",
+            "Apa next step dalam proses rekrutmen?"
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "8. Bawa Portfolio atau Work Sample"
+        },
+        {
+          "type": "paragraph",
+          "text": "Jika relevan dengan posisi, bawa portfolio fisik atau digital yang menunjukkan hasil kerja Anda. Ini adalah bukti konkret dari kemampuan Anda."
+        },
+        {
+          "type": "heading",
+          "text": "9. Follow Up Email"
+        },
+        {
+          "type": "paragraph",
+          "text": "Dalam 24 jam setelah interview, kirim thank you email. Ucapkan terima kasih atas waktu yang diberikan dan reiterasi ketertarikan Anda terhadap posisi."
+        },
+        {
+          "type": "heading",
+          "text": "10. Tetap Tenang dan Jujur"
+        },
+        {
+          "type": "paragraph",
+          "text": "Jika ada pertanyaan yang tidak Anda ketahui, lebih baik jujur daripada mengada-ada. Anda bisa mengatakan, \"Saya belum familiar dengan hal itu, tapi saya excited untuk mempelajarinya.\""
+        },
+        {
+          "type": "highlight",
+          "text": "Ingat: Interview adalah komunikasi dua arah. Anda juga sedang mengevaluasi apakah perusahaan ini cocok untuk Anda. Jadi, be yourself dan tunjukkan versi terbaik dari diri Anda!"
+        }
+      ]
+    },
+    {
+      "id": "negosiasi-gaji-efektif",
+      "title": "Cara Negosiasi Gaji yang Efektif untuk Fresh Graduate",
+      "summary": "Negosiasi gaji sering kali menjadi momen yang awkward, terutama bagi fresh graduate. Pelajari strategi negosiasi yang profesional dan efektif di sini.",
+      "coverImage": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&q=80",
+      "category": "salary-advice",
+      "readTime": "6 min",
+      "publishedAt": "2024-12-10T14:30:00Z",
+      "author": "Job Finder Editorial Team",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Negosiasi gaji adalah skill penting yang harus dikuasai setiap profesional, termasuk fresh graduate. Banyak yang merasa tidak enak atau takut ditolak saat negosiasi, padahal ini adalah bagian normal dari proses rekrutmen."
+        },
+        {
+          "type": "heading",
+          "text": "Kapan Waktu yang Tepat untuk Negosiasi?"
+        },
+        {
+          "type": "paragraph",
+          "text": "Timing sangat penting dalam negosiasi gaji. Jangan terburu-buru membicarakan gaji di awal interview. Tunggu hingga perusahaan menunjukkan ketertarikan serius pada Anda, biasanya setelah mereka memberikan job offer."
+        },
+        {
+          "type": "highlight",
+          "text": "Golden rule: Biarkan perusahaan yang menyebut angka pertama. Jika ditanya ekspektasi gaji di awal, Anda bisa menjawab: \"Saya terbuka untuk diskusi. Bisakah saya tahu range gaji untuk posisi ini?\""
+        },
+        {
+          "type": "heading",
+          "text": "Riset Standar Gaji di Industri"
+        },
+        {
+          "type": "paragraph",
+          "text": "Sebelum negosiasi, lakukan riset mendalam tentang standar gaji untuk posisi dan industri yang sama. Gunakan sumber-sumber terpercaya seperti:"
+        },
+        {
+          "type": "bulletList",
+          "items": [
+            "Job boards yang menampilkan salary range",
+            "Laporan salary survey dari konsultan HR",
+            "LinkedIn Salary Insights",
+            "Bertanya pada senior atau mentor di industri yang sama",
+            "Forum komunitas profesional"
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "Hitung Total Compensation Package"
+        },
+        {
+          "type": "paragraph",
+          "text": "Gaji bukan hanya tentang angka di slip gaji. Pertimbangkan total compensation package yang meliputi:"
+        },
+        {
+          "type": "bulletList",
+          "items": [
+            "Gaji pokok (basic salary)",
+            "Tunjangan (transport, makan, komunikasi)",
+            "BPJS Kesehatan & Ketenagakerjaan",
+            "Bonus (performance, tahunan)",
+            "THR (Tunjangan Hari Raya)",
+            "Health insurance tambahan",
+            "Training & development budget",
+            "Work-life balance (remote option, flexible hours)"
+          ]
+        },
+        {
+          "type": "image",
+          "url": "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=800&q=80",
+          "caption": "Negosiasi gaji yang efektif memerlukan persiapan dan strategi"
+        },
+        {
+          "type": "heading",
+          "text": "Strategi Negosiasi untuk Fresh Graduate"
+        },
+        {
+          "type": "paragraph",
+          "text": "Sebagai fresh graduate, Anda mungkin tidak punya leverage sebesar profesional berpengalaman. Namun, Anda tetap bisa negosiasi dengan strategi yang tepat:"
+        },
+        {
+          "type": "paragraph",
+          "text": "1. **Fokus pada Value, Bukan Kebutuhan**: Jangan bilang \"Saya butuh gaji X karena harus bayar kos/utang\". Sebaliknya, tunjukkan value yang Anda bawa: skills, project experience, prestasi akademik, organizational experience."
+        },
+        {
+          "type": "paragraph",
+          "text": "2. **Berikan Range, Bukan Angka Pasti**: Contoh: \"Berdasarkan riset saya, standar untuk posisi ini adalah Rp 5-7 juta. Dengan skill dan pengalaman saya, saya mengharapkan range Rp 6-7 juta.\""
+        },
+        {
+          "type": "paragraph",
+          "text": "3. **Tunjukkan Flexibility**: \"Saya sangat tertarik dengan posisi ini dan excited untuk berkontribusi. Saya terbuka untuk diskusi lebih lanjut mengenai compensation package yang fair untuk kedua belah pihak.\""
+        },
+        {
+          "type": "heading",
+          "text": "Frasa yang Bisa Digunakan"
+        },
+        {
+          "type": "bulletList",
+          "items": [
+            "\"Berdasarkan riset saya dan mempertimbangkan skills yang saya miliki...\"",
+            "\"Saya sangat antusias dengan posisi ini. Bisakah kita diskusikan compensation package-nya?\"",
+            "\"Saya melihat standar industri untuk posisi ini adalah... Apakah ada flexibility untuk diskusi?\"",
+            "\"Selain gaji pokok, benefit apa saja yang termasuk dalam package ini?\"",
+            "\"Jika gaji tidak bisa disesuaikan saat ini, apakah ada opsi untuk performance review dalam 6 bulan?\""
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "Yang Harus Dihindari"
+        },
+        {
+          "type": "bulletList",
+          "items": [
+            "Jangan berbohong tentang offer dari perusahaan lain",
+            "Jangan terlihat desperate atau needy",
+            "Jangan compare dengan gaji teman (\"Teman saya di perusahaan X dapat...\")",
+            "Jangan negosiasi terlalu agresif hingga terkesan arogan",
+            "Jangan langsung terima offer pertama tanpa pikir-pikir"
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "Jika Offer Terlalu Rendah?"
+        },
+        {
+          "type": "paragraph",
+          "text": "Jika offer jauh di bawah ekspektasi, Anda punya beberapa opsi:"
+        },
+        {
+          "type": "paragraph",
+          "text": "• **Counter offer dengan angka yang reasonable**: Berikan justifikasi mengapa Anda layak mendapat angka tersebut."
+        },
+        {
+          "type": "paragraph",
+          "text": "• **Nego benefit lain**: Jika gaji tidak bisa naik, nego remote work option, training budget, atau performance review lebih cepat."
+        },
+        {
+          "type": "paragraph",
+          "text": "• **Minta waktu untuk pikir-pikir**: \"Terima kasih atas offer-nya. Boleh saya minta waktu 2-3 hari untuk mempertimbangkannya?\""
+        },
+        {
+          "type": "paragraph",
+          "text": "• **Tolak dengan sopan jika memang tidak cocok**: Tidak apa-apa untuk decline offer jika memang tidak sesuai value Anda."
+        },
+        {
+          "type": "highlight",
+          "text": "Ingat: Negosiasi bukan tentang menang atau kalah, tapi mencapai kesepakatan yang win-win untuk kedua belah pihak. Lakukan dengan profesional, sopan, dan percaya diri!"
+        }
+      ]
+    },
+    {
+      "id": "work-life-balance-tips",
+      "title": "7 Tips Menjaga Work-Life Balance di Era Remote Working",
+      "summary": "Remote working membuat batas antara pekerjaan dan kehidupan pribadi semakin blur. Pelajari cara menjaga keseimbangan hidup yang sehat dengan tips praktis ini.",
+      "coverImage": "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&q=80",
+      "category": "workplace-wellbeing",
+      "readTime": "7 min",
+      "publishedAt": "2024-12-05T09:00:00Z",
+      "author": "Job Finder Editorial Team",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Remote working atau work from home (WFH) memberikan fleksibilitas yang luar biasa. Namun, tanpa manajemen yang baik, justru bisa membuat Anda overwork dan burnout. Berikut adalah 7 tips untuk menjaga work-life balance di era remote working."
+        },
+        {
+          "type": "heading",
+          "text": "1. Tetapkan Jam Kerja yang Jelas"
+        },
+        {
+          "type": "paragraph",
+          "text": "Salah satu tantangan terbesar remote working adalah tidak adanya batas waktu yang jelas. Anda bisa tergoda untuk \"hanya check email sebentar\" meski sudah malam."
+        },
+        {
+          "type": "bulletList",
+          "items": [
+            "Tentukan jam mulai dan selesai kerja yang konsisten",
+            "Komunikasikan working hours Anda ke tim dan atasan",
+            "Set auto-reply di luar jam kerja",
+            "Matikan notifikasi work apps setelah jam kerja",
+            "Treat weekend seperti weekend (kecuali emergency)"
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "2. Ciptakan Dedicated Workspace"
+        },
+        {
+          "type": "paragraph",
+          "text": "Pisahkan area kerja dengan area personal. Hindari bekerja di kasur karena akan mengacaukan sleep hygiene dan membuat pikiran tidak bisa relax."
+        },
+        {
+          "type": "image",
+          "url": "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=800&q=80",
+          "caption": "Workspace yang terpisah membantu memisahkan work mode dan rest mode"
+        },
+        {
+          "type": "heading",
+          "text": "3. Gunakan Teknik Pomodoro"
+        },
+        {
+          "type": "paragraph",
+          "text": "Teknik Pomodoro membantu Anda fokus dan menghindari burnout:"
+        },
+        {
+          "type": "bulletList",
+          "items": [
+            "Kerja fokus 25 menit",
+            "Break 5 menit (jalan, stretching, minum)",
+            "Setelah 4 cycles, break 15-30 menit",
+            "Gunakan timer untuk disiplin"
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Ini mencegah Anda duduk 8 jam non-stop yang tidak sehat untuk tubuh dan mental."
+        },
+        {
+          "type": "heading",
+          "text": "4. Take Real Breaks"
+        },
+        {
+          "type": "paragraph",
+          "text": "Lunch break adalah waktu untuk makan dan istirahat, bukan untuk sambil meeting atau balas chat. Manfaatkan break untuk:"
+        },
+        {
+          "type": "bulletList",
+          "items": [
+            "Makan dengan tenang (no screen time)",
+            "Jalan-jalan sebentar di luar rumah",
+            "Stretching atau light exercise",
+            "Power nap 15-20 menit jika perlu",
+            "Hobby time (baca, main musik, dll)"
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "5. Stay Connected dengan Tim"
+        },
+        {
+          "type": "paragraph",
+          "text": "Remote working bisa membuat Anda merasa isolated. Maintain social connection dengan:"
+        },
+        {
+          "type": "bulletList",
+          "items": [
+            "Virtual coffee chat dengan rekan kerja",
+            "Join online team building activities",
+            "Over-communicate (chat, video call, dll)",
+            "Celebrate small wins bersama tim",
+            "Share non-work stuff di channel casual"
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "6. Set Boundaries dengan Keluarga/Teman Serumah"
+        },
+        {
+          "type": "paragraph",
+          "text": "Komunikasikan ke keluarga atau teman serumah bahwa meski di rumah, Anda sedang bekerja dan butuh tidak diganggu pada jam-jam tertentu."
+        },
+        {
+          "type": "highlight",
+          "text": "Tips: Gunakan visual cue seperti headphone, pintu tertutup, atau \"Do Not Disturb\" sign untuk memberi tanda bahwa Anda sedang fokus."
+        },
+        {
+          "type": "heading",
+          "text": "7. Develop After-Work Routine"
+        },
+        {
+          "type": "paragraph",
+          "text": "Karena tidak ada commute time, create ritual untuk menandai \"selesai kerja\":"
+        },
+        {
+          "type": "bulletList",
+          "items": [
+            "Shutdown laptop dan taruh di tempat yang sama setiap hari",
+            "Ganti baju (symbolic separation)",
+            "Evening walk atau workout",
+            "Masak dinner",
+            "Quality time dengan keluarga/hobi"
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Ini membantu otak Anda switch dari work mode ke personal mode."
+        },
+        {
+          "type": "heading",
+          "text": "Tanda-Tanda Anda Perlu Re-balance"
+        },
+        {
+          "type": "paragraph",
+          "text": "Watch out untuk red flags berikut:"
+        },
+        {
+          "type": "bulletList",
+          "items": [
+            "Check email/chat work di malam hari atau weekend secara compulsive",
+            "Sulit tidur atau insomnia",
+            "Feeling exhausted meski tidak banyak aktivitas fisik",
+            "Irritable atau mood swing",
+            "Neglect personal relationships dan hobi",
+            "Physical symptoms: sakit kepala, back pain, eye strain"
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Jika Anda mengalami beberapa tanda di atas, it's time to reassess your work-life balance dan make changes."
+        },
+        {
+          "type": "highlight",
+          "text": "Remember: Produktivitas bukan tentang kerja 12 jam sehari. It's about working smart, staying healthy, dan sustainable dalam jangka panjang. Your wellbeing is your responsibility!"
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "total": 3,
+    "disclaimer": "All articles are original content created by Job Finder Editorial Team. These articles are intended for educational and career development purposes."
+  }
+}
