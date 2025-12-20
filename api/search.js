@@ -193,15 +193,25 @@ module.exports = async (req, res) => {
 
     /**
      * Cache Strategy:
-     * - 30 minutes cache for search results
+     * - 15 minutes cache for search results (following best practice)
      */
     res.setHeader(
       'Cache-Control', 
-      's-maxage=1800, stale-while-revalidate'
+      's-maxage=900, stale-while-revalidate'
     );
 
-    // Scrape all jobs
-    let jobs = await scrapeJobs();
+    /**
+     * SEARCH-BASED SCRAPING IMPLEMENTATION
+     * 
+     * Pass search parameters to scraper to build dynamic JobStreet URL
+     * JobStreet will do the heavy lifting of filtering
+     * We only scrape the relevant search results
+     */
+    let jobs = await scrapeJobs({
+      q: keyword,           // Keyword search
+      location: location,   // Location filter
+      page: pageNum        // Pagination
+    });
 
     // Add category field to each job
     jobs = jobs.map(job => ({

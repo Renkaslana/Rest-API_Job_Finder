@@ -15,34 +15,75 @@ const fetch = require('node-fetch');
 const cheerio = require('cheerio');
 
 /**
- * Scrape job listings dari Kalibrr public page
+ * Build JobStreet search URL dynamically based on user parameters
+ * SEARCH-BASED SCRAPING: Only scrape search results, not all data
  * 
- * Kalibrr dipilih karena:
- * - Halaman publik dapat diakses tanpa login
- * - Struktur HTML relatif stabil
- * - Tidak ada heavy JavaScript rendering
+ * @param {Object} params - Search parameters
+ * @param {string} params.q - Keyword (job title or skill)
+ * @param {string} params.location - Location (city or region)
+ * @param {string} params.category - Category/classification
+ * @param {number} params.page - Page number for pagination
+ * @returns {string} JobStreet search URL
+ */
+function buildJobStreetSearchURL(params = {}) {
+  const { q, location, category, page = 1 } = params;
+  
+  // Base JobStreet search URL
+  let url = 'https://id.jobstreet.com/id/jobs';
+  const queryParams = [];
+  
+  // Add keyword search
+  if (q && q.trim()) {
+    queryParams.push(`q=${encodeURIComponent(q.trim())}`);
+  }
+  
+  // Add location filter
+  if (location && location.trim() && location !== 'Semua Lokasi') {
+    queryParams.push(`where=${encodeURIComponent(location.trim())}`);
+  }
+  
+  // Add pagination
+  if (page && page > 1) {
+    queryParams.push(`page=${page}`);
+  }
+  
+  // Build final URL
+  if (queryParams.length > 0) {
+    url += '?' + queryParams.join('&');
+  } else {
+    // Default: all jobs in Indonesia
+    url += '/in-Indonesia';
+  }
+  
+  return url;
+}
+
+/**
+ * Scrape job listings based on search parameters
+ * IMPLEMENTS SEARCH-BASED SCRAPING STRATEGY
  * 
+ * How it works:
+ * 1. User selects filters (keyword, location, etc)
+ * 2. Build JobStreet search URL with those filters
+ * 3. Scrape ONLY the search result page
+ * 4. Return structured data
+ * 
+ * Benefits:
+ * - Only load relevant data
+ * - Leverage JobStreet's search engine
+ * - Lightweight and efficient
+ * - Respects rate limiting
+ * 
+ * @param {Object} searchParams - Search parameters from user
  * @returns {Promise<Array>} Array of job objects
  */
-async function scrapeJobs() {
+async function scrapeJobs(searchParams = {}) {
   try {
-    /**
-     * Target URL: Halaman job listing publik
-     * 
-     * JobStreet Indonesia dipilih karena:
-     * - Halaman publik dengan 57,000+ lowongan kerja
-     * - Data terstruktur dengan baik
-     * - Informasi lengkap (title, company, location, salary, date)
-     * 
-     * Alternatif sumber yang bisa dicoba:
-     * - https://www.kalibrr.com/id-ID/home/jobs
-     * - https://id.indeed.com/jobs?q=programmer&l=Jakarta
-     * 
-     * CATATAN: Ganti URL sesuai sumber yang Anda pilih
-     */
-    const TARGET_URL = 'https://id.jobstreet.com/id/jobs/in-Indonesia';
+    // Build dynamic search URL based on user parameters
+    const TARGET_URL = buildJobStreetSearchURL(searchParams);
     
-    console.log(`[Scraper] Fetching jobs from: ${TARGET_URL}`);
+    console.log(`[Scraper] Search-based scraping from: ${TARGET_URL}`);
+    console.log(`[Scraper] Parameters:`, searchParams);
     
     /**
      * HTTP Request ke target website
