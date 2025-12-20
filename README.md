@@ -18,10 +18,11 @@ REST API untuk job listings dan career articles dengan **on-request scraping** d
 - ✅ **5 min Cache**: Quick response untuk data recommendations
 
 ### 📰 Career Articles
-- ✅ **Original Content**: Career tips & advice articles
-- ✅ **Block-based Structure**: Paragraphs, headings, lists, images, highlights
-- ✅ **Categories**: Career development, salary advice, workplace wellbeing
-- ✅ **24 hour Cache**: Static content dengan long-term caching
+- ✅ **Preview + Reference**: Article previews with links to JobStreet
+- ✅ **Copyright Safe**: No full content scraping
+- ✅ **Self-written Summaries**: Original preview content
+- ✅ **Stock Images**: Free-licensed images from Unsplash
+- ✅ **24 hour Cache**: Static content with long-term caching
 
 ## 🚀 Quick Start
 
@@ -214,120 +215,124 @@ GET /api/job?url=https%3A%2F%2Fid.jobstreet.com%2Fid%2Fjob%2F12345678
 
 ---
 
-### 📰 Article Endpoints (NEW!)
+### 📰 Article Endpoints
 
 ### GET /api/articles
 
-**Description**: Get career advice articles list
+**Description**: Get article previews with external source references
 
 **Query Parameters**:
-- `category` (string): Filter by category
-  - `career-development`
-  - `salary-advice`
-  - `workplace-wellbeing`
+- `category` (string, optional): Filter by category
 - `page` (number): Page number (default: 1)
 - `limit` (number): Articles per page (default: 10, max: 50)
 
+**Categories**:
+- Pengembangan Karir
+- Gaji & Benefit
+- Kesejahteraan Kerja
+
 **Example**:
 ```
-GET /api/articles?category=salary-advice&limit=10
+GET /api/articles?limit=5
 ```
 
 **Response**:
 ```json
 {
   "status": "success",
-  "data": {
-    "articles": [
-      {
-        "id": "negosiasi-gaji-efektif",
-        "title": "Cara Negosiasi Gaji yang Efektif untuk Fresh Graduate",
-        "summary": "Negosiasi gaji sering kali menjadi momen yang awkward...",
-        "coverImage": "https://...",
-        "category": "salary-advice",
-        "readTime": "6 min",
-        "publishedAt": "2024-12-10T14:30:00Z",
-        "author": "Job Finder Editorial Team"
+  "statusCode": 200,
+  "message": "Found 5 articles",
+  "meta": {
+    "page": 1,
+    "limit": 10,
+    "total": 5,
+    "totalPages": 1,
+    "hasNext": false,
+    "hasPrevious": false
+  },
+  "articles": [
+    {
+      "id": "negosiasi-gaji-efektif",
+      "title": "Panduan Negosiasi Gaji untuk Fresh Graduate",
+      "category": "Gaji & Benefit",
+      "thumbnail": "https://images.unsplash.com/photo-1554224311.jpg",
+      "summary": "Negosiasi gaji bukan hanya tentang angka...",
+      "source": {
+        "name": "JobStreet Career Advice",
+        "url": "https://id.jobstreet.com/id/career-advice/..."
       }
-    ],
-    "metadata": {
-      "total_results": 3,
-      "page": 1,
-      "total_pages": 1,
-      "disclaimer": "Original content for educational purposes"
     }
-  }
+  ]
 }
 ```
+
+**Key Features**:
+- ✅ Copyright safe (preview only, no full content scraping)
+- ✅ Stock images from Unsplash (free license)
+- ✅ Self-written summaries
+- ✅ Links to original JobStreet articles
 
 ---
 
 ### GET /api/articles/[id]
 
-**Description**: Get full article content with block-based structure
+**Description**: Get article detail with content preview and external source link
 
 **Path Parameters**:
 - `id` (string, required): Article ID
 
+**Available Articles**:
+- `tips-interview-kerja-sukses`
+- `negosiasi-gaji-efektif`
+- `work-life-balance-tips`
+- `resume-ats-friendly`
+- `networking-karir-profesional`
+
 **Example**:
 ```
 GET /api/articles/tips-interview-kerja-sukses
-GET /api/articles/negosiasi-gaji-efektif
-GET /api/articles/work-life-balance-tips
 ```
 
 **Response**:
 ```json
 {
   "status": "success",
-  "data": {
-    "article": {
-      "id": "tips-interview-kerja-sukses",
-      "title": "10 Tips Interview Kerja yang Akan Membuat Anda Sukses",
-      "summary": "Panduan lengkap mempersiapkan diri...",
-      "coverImage": "https://...",
-      "category": "career-development",
-      "readTime": "8 min",
-      "publishedAt": "2024-12-15T10:00:00Z",
-      "author": "Job Finder Editorial Team",
-      "content": [
-        {
-          "type": "paragraph",
-          "text": "Interview kerja adalah momen krusial..."
-        },
-        {
-          "type": "heading",
-          "text": "1. Riset Mendalam tentang Perusahaan"
-        },
-        {
-          "type": "bulletList",
-          "items": ["Kunjungi website resmi", "Baca berita terbaru", ...]
-        },
-        {
-          "type": "image",
-          "url": "https://...",
-          "caption": "Persiapan yang matang adalah kunci"
-        },
-        {
-          "type": "highlight",
-          "text": "Ingat: Interview adalah komunikasi dua arah..."
-        }
-      ]
+  "statusCode": 200,
+  "message": "Article found",
+  "id": "tips-interview-kerja-sukses",
+  "title": "10 Tips Interview Kerja yang Efektif",
+  "category": "Pengembangan Karir",
+  "coverImage": "https://images.unsplash.com/photo-157349.jpg",
+  "contentPreview": [
+    {
+      "type": "paragraph",
+      "text": "Interview kerja adalah momen krusial dalam proses rekrutmen..."
     },
-    "metadata": {
-      "content_blocks": 25,
-      "content_types": ["paragraph", "heading", "bulletList", "image", "highlight"]
+    {
+      "type": "bullet",
+      "items": [
+        "Riset perusahaan dan posisi yang dilamar secara mendalam",
+        "Siapkan jawaban untuk pertanyaan umum",
+        "Latih body language dan kontak mata yang percaya diri"
+      ]
     }
+  ],
+  "externalSource": {
+    "label": "Baca artikel lengkap di JobStreet",
+    "url": "https://id.jobstreet.com/id/career-advice/..."
   }
 }
 ```
 
-**Content Block Types**:
-- `paragraph`: Plain text paragraph
-- `heading`: Section heading
-- `bulletList`: List with `items` array
-- `image`: Image with `url` and optional `caption`
-- `highlight`: Highlighted/quoted text
+**Content Preview Types**:
+- `paragraph`: Self-written introductory text
+- `bullet`: Key points summary (self-written)
+
+**Purpose**:
+- Provides preview and reference to full article
+- No copyright violation (no full content scraping)
+- Suitable for academic projects
+- Professional UX design
 
 ---
 

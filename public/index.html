@@ -413,25 +413,34 @@
                     </div>
                 </div>
 
-                <h3 style="margin: 40px 0 15px 0; color: #667eea;">📰 Career Articles</h3>
+                <h3 style="margin: 40px 0 15px 0; color: #667eea;">📰 Career Articles (Preview + Reference)</h3>
 
-                <!-- Endpoint 6: Articles List -->
-                <div class="endpoint-card" onclick="window.open(getBaseUrl() + '/api/articles?category=career-development&limit=10', '_blank')">
+                <!-- Endpoint 5: Articles List -->
+                <div class="endpoint-card" onclick="window.open(getBaseUrl() + '/api/articles?limit=10', '_blank')">
                     <div class="endpoint-header">
                         <span class="method">GET</span>
                         <span class="endpoint-url">/api/articles</span>
                     </div>
                     <div class="endpoint-desc">
-                        🆕 <strong>NEW!</strong> Get career advice articles list (original content)
+                        📚 Get article previews with links to full content on JobStreet
                     </div>
                     <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 5px; font-size: 0.85em;">
                         <strong>Query Parameters:</strong><br>
-                        • <code style="color: #667eea;">category</code> - Filter by category (career-development, salary-advice, workplace-wellbeing)<br>
+                        • <code style="color: #667eea;">category</code> - Filter by category (optional)<br>
                         • <code style="color: #667eea;">page</code> - Page number (default: 1)<br>
                         • <code style="color: #667eea;">limit</code> - Articles per page (default: 10, max: 50)<br><br>
+                        <strong>Response Fields:</strong><br>
+                        • <code style="color: #667eea;">id</code> - Article unique ID<br>
+                        • <code style="color: #667eea;">title</code> - Article title<br>
+                        • <code style="color: #667eea;">category</code> - Article category<br>
+                        • <code style="color: #667eea;">thumbnail</code> - Cover image URL (stock photos)<br>
+                        • <code style="color: #667eea;">summary</code> - Brief summary (self-written)<br>
+                        • <code style="color: #667eea;">source</code> - External source reference<br><br>
+                        <strong>Categories:</strong><br>
+                        Pengembangan Karir, Gaji & Benefit, Kesejahteraan Kerja<br><br>
                         <strong>Example:</strong><br>
-                        <code style="color: #667eea;">/api/articles?category=salary-advice&limit=5</code><br><br>
-                        <strong>Available Categories:</strong> career-development, salary-advice, workplace-wellbeing
+                        <code style="color: #667eea;">/api/articles?limit=5</code><br><br>
+                        ⚖️ <strong>Copyright Safe:</strong> Only preview + link to original source
                     </div>
                 </div>
 
@@ -442,18 +451,24 @@
                         <span class="endpoint-url">/api/articles/[id]</span>
                     </div>
                     <div class="endpoint-desc">
-                        🆕 <strong>NEW!</strong> Get full article content dengan block-based structure
+                        📄 Get article detail with content preview and external source link
                     </div>
                     <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 5px; font-size: 0.85em;">
-                        <strong>Content Blocks:</strong><br>
-                        • <code style="color: #667eea;">paragraph</code> - Text paragraph<br>
-                        • <code style="color: #667eea;">heading</code> - Section heading<br>
-                        • <code style="color: #667eea;">bulletList</code> - List items<br>
-                        • <code style="color: #667eea;">image</code> - Image with caption<br>
-                        • <code style="color: #667eea;">highlight</code> - Highlighted text<br><br>
+                        <strong>Response Fields:</strong><br>
+                        • <code style="color: #667eea;">id</code>, <code style="color: #667eea;">title</code>, <code style="color: #667eea;">category</code>, <code style="color: #667eea;">coverImage</code><br>
+                        • <code style="color: #667eea;">contentPreview</code> - Array of preview blocks:<br>
+                        &nbsp;&nbsp;- <code style="color: #667eea;">paragraph</code>: Self-written intro text<br>
+                        &nbsp;&nbsp;- <code style="color: #667eea;">bullet</code>: Key points summary<br>
+                        • <code style="color: #667eea;">externalSource</code> - Link to full article on JobStreet<br><br>
+                        <strong>Available Articles:</strong><br>
+                        • <code style="color: #667eea;">tips-interview-kerja-sukses</code><br>
+                        • <code style="color: #667eea;">negosiasi-gaji-efektif</code><br>
+                        • <code style="color: #667eea;">work-life-balance-tips</code><br>
+                        • <code style="color: #667eea;">resume-ats-friendly</code><br>
+                        • <code style="color: #667eea;">networking-karir-profesional</code><br><br>
                         <strong>Example:</strong><br>
-                        <code style="color: #667eea;">/api/articles/tips-interview-kerja-sukses</code><br>
-                        <code style="color: #667eea;">/api/articles/negosiasi-gaji-efektif</code>
+                        <code style="color: #667eea;">/api/articles/tips-interview-kerja-sukses</code><br><br>
+                        ⚖️ <strong>Copyright Safe:</strong> No full content scraping, only preview + reference
                     </div>
                 </div>
 
@@ -490,7 +505,17 @@ fetch('<span class="base-url"></span>/api/jobstreet?page=1&limit=20')
 const jobUrl = encodeURIComponent('https://id.jobstreet.com/id/job/12345678');
 fetch(`<span class="base-url"></span>/api/job?url=${jobUrl}`)
   .then(res => res.json())
-  .then(data => console.log(data.data));</code></pre>
+  .then(data => console.log(data.data));
+
+// Articles list
+fetch('<span class="base-url"></span>/api/articles?limit=5')
+  .then(res => res.json())
+  .then(data => console.log(data.articles));
+
+// Article detail
+fetch('<span class="base-url"></span>/api/articles/tips-interview-kerja-sukses')
+  .then(res => res.json())
+  .then(data => console.log(data));</code></pre>
                 </div>
 
                 <h3 style="margin: 20px 0 10px 0;">cURL</h3>
@@ -509,7 +534,13 @@ curl "<span class="base-url"></span>/api/search?location=jawa-tengah&classificat
 curl "<span class="base-url"></span>/api/jobstreet?page=1&limit=20"
 
 # Detail job
-curl "<span class="base-url"></span>/api/job?url=https%3A%2F%2Fid.jobstreet.com%2Fid%2Fjob%2F12345"</code></pre>
+curl "<span class="base-url"></span>/api/job?url=https%3A%2F%2Fid.jobstreet.com%2Fid%2Fjob%2F12345"
+
+# Articles list
+curl "<span class="base-url"></span>/api/articles?limit=5"
+
+# Article detail
+curl "<span class="base-url"></span>/api/articles/tips-interview-kerja-sukses"</code></pre>
                 </div>
 
                 <h3 style="margin: 20px 0 10px 0;">Python</h3>
@@ -540,7 +571,15 @@ recommendations = jobstreet.json()['data']
 from urllib.parse import quote
 job_url = quote('https://id.jobstreet.com/id/job/12345678')
 detail = requests.get(f'<span class="base-url"></span>/api/job?url={job_url}')
-print(detail.json()['data'])</code></pre>
+print(detail.json()['data'])
+
+# Articles list
+articles = requests.get('<span class="base-url"></span>/api/articles?limit=5')
+print(articles.json()['articles'])
+
+# Article detail
+article = requests.get('<span class="base-url"></span>/api/articles/tips-interview-kerja-sukses')
+print(article.json())</code></pre>
                 </div>
             </div>
 
@@ -596,6 +635,69 @@ print(detail.json()['data'])</code></pre>
   }
 }</code></pre>
                 </div>
+
+                <h3 style="margin: 20px 0 10px 0;">Articles List (/api/articles)</h3>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <pre><code>{
+  "status": "success",
+  "statusCode": 200,
+  "message": "Found 5 articles",
+  "meta": {
+    "page": 1,
+    "limit": 10,
+    "total": 5,
+    "totalPages": 1,
+    "hasNext": false,
+    "hasPrevious": false
+  },
+  "articles": [
+    {
+      "id": "negosiasi-gaji-efektif",
+      "title": "Panduan Negosiasi Gaji untuk Fresh Graduate",
+      "category": "Gaji & Benefit",
+      "thumbnail": "https://images.unsplash.com/photo-1554224311.jpg",
+      "summary": "Negosiasi gaji bukan hanya tentang angka...",
+      "source": {
+        "name": "JobStreet Career Advice",
+        "url": "https://id.jobstreet.com/id/career-advice/..."
+      }
+    }
+  ]
+}</code></pre>
+                </div>
+
+                <h3 style="margin: 20px 0 10px 0;">Article Detail (/api/articles/[id])</h3>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <pre><code>{
+  "status": "success",
+  "statusCode": 200,
+  "message": "Article found",
+  "id": "tips-interview-kerja-sukses",
+  "title": "10 Tips Interview Kerja yang Efektif",
+  "category": "Pengembangan Karir",
+  "coverImage": "https://images.unsplash.com/photo-157349.jpg",
+  "contentPreview": [
+    {
+      "type": "paragraph",
+      "text": "Interview kerja adalah momen krusial..."
+    },
+    {
+      "type": "bullet",
+      "items": [
+        "Riset perusahaan dan posisi secara mendalam",
+        "Siapkan jawaban untuk pertanyaan umum",
+        "Latih body language yang percaya diri"
+      ]
+    }
+  ],
+  "externalSource": {
+    "label": "Baca artikel lengkap di JobStreet",
+    "url": "https://id.jobstreet.com/id/career-advice/..."
+  }
+}</code></pre>
+                </div>
             </div>
 
             <div class="section">
@@ -618,8 +720,8 @@ print(detail.json()['data'])</code></pre>
                         <p>Open source</p>
                     </div>
                     <div class="feature-item">
-                        <h4>📝 Full Desc</h4>
-                        <p>2000+ characters</p>
+                        <h4>⚖️ Copyright Safe</h4>
+                        <p>Preview + Reference</p>
                     </div>
                     <div class="feature-item">
                         <h4>🚀 Fast</h4>

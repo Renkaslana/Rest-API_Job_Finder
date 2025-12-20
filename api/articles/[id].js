@@ -3,14 +3,12 @@
  * 
  * Endpoint: GET /api/articles/[id]
  * 
- * Returns full article detail including content blocks
+ * Returns article preview with content preview and link to full article
  * 
- * Content Structure:
- * - paragraph: Plain text paragraph
- * - heading: Section heading
- * - bulletList: Array of list items
- * - image: URL and optional caption
- * - highlight: Highlighted/quoted text
+ * Content Preview Structure:
+ * - paragraph: Text paragraph (self-written)
+ * - bullet: List of key points (self-written)
+ * - No full article content from JobStreet
  * 
  * Cache: 24 hours (static content)
  */
@@ -101,30 +99,19 @@ module.exports = async (req, res) => {
       });
     }
 
-    // Success response with full article content
+    // Success response with preview content only
     return res.status(200).json({
       status: 'success',
-      creator: 'Job Finder API',
       statusCode: 200,
       message: 'Article found',
-      ok: true,
-      data: {
-        article: {
-          id: article.id,
-          title: article.title,
-          summary: article.summary,
-          coverImage: article.coverImage,
-          category: article.category,
-          readTime: article.readTime,
-          publishedAt: article.publishedAt,
-          author: article.author,
-          content: article.content // Full content with blocks
-        },
-        metadata: {
-          content_blocks: article.content?.length || 0,
-          content_types: [...new Set(article.content?.map(block => block.type) || [])],
-          disclaimer: 'Original content for educational and career development purposes'
-        }
+      id: article.id,
+      title: article.title,
+      category: article.category,
+      coverImage: article.thumbnail,
+      contentPreview: article.contentPreview || [],
+      externalSource: {
+        label: article.externalSource?.label || 'Baca selengkapnya di JobStreet',
+        url: article.externalSource?.url || ''
       }
     });
 

@@ -4,11 +4,12 @@
  * Endpoint: GET /api/articles
  * 
  * Query Parameters:
- * - category: Filter by category (career-development, salary-advice, workplace-wellbeing)
- * - limit: Number of articles to return (default: 10)
+ * - category: Filter by category (optional)
+ * - limit: Number of articles to return (default: 10, max: 50)
  * - page: Page number (default: 1)
  * 
- * Returns list of article previews (without full content)
+ * Returns list of article previews with external source references
+ * Articles contain summary and link to full content on JobStreet
  * 
  * Cache: 24 hours (articles are static content)
  */
@@ -93,41 +94,35 @@ module.exports = async (req, res) => {
     const totalResults = articles.length;
     const totalPages = Math.ceil(totalResults / limitNum);
 
-    // Get articles for current page (without full content)
+    // Get articles for current page (preview only)
     const paginatedArticles = articles
       .slice(offset, offset + limitNum)
       .map(article => ({
         id: article.id,
         title: article.title,
-        summary: article.summary,
-        coverImage: article.coverImage,
         category: article.category,
-        readTime: article.readTime,
-        publishedAt: article.publishedAt,
-        author: article.author
-        // Exclude content from list view
+        thumbnail: article.thumbnail,
+        summary: article.summary,
+        source: {
+          name: article.externalSource?.name || 'JobStreet Career Advice',
+          url: article.externalSource?.url || ''
+        }
       }));
 
-    // Success response
+    // Success response with new structure
     return res.status(200).json({
       status: 'success',
-      creator: 'Job Finder API',
       statusCode: 200,
       message: `Found ${totalResults} articles`,
-      ok: true,
-      data: {
-        articles: paginatedArticles,
-        metadata: {
-          total_results: totalResults,
-          page: pageNum,
-          limit: limitNum,
-          total_pages: totalPages,
-          has_next: pageNum < totalPages,
-          has_previous: pageNum > 1,
-          category_filter: category || 'all',
-          disclaimer: data.metadata?.disclaimer || 'Original content for educational purposes'
-        }
-      }
+      meta: {
+        page: pageNum,
+        limit: limitNum,
+        total: totalResults,
+        totalPages: totalPages,
+        hasNext: pageNum < totalPages,
+        hasPrevious: pageNum > 1
+      },
+      articles: paginatedArticles
     });
 
   } catch (error) {
