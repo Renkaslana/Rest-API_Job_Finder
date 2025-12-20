@@ -234,6 +234,9 @@ async function scrapeJobs(searchParams = {}) {
         
         const parentText = $parent.text();
         
+        // Get ALL text including deeper nested elements for better matching
+        const fullText = $parent.parent().text() + ' ' + parentText;
+        
         // IMPROVED: Extract company name dengan lebih akurat
         let company = 'Perusahaan Rahasia';
         
@@ -294,6 +297,7 @@ async function scrapeJobs(searchParams = {}) {
         
         // IMPROVED: Extract posted date (kapan lowongan di-post)
         // Priority: ambil yang format "X hari/minggu/bulan yang lalu"
+        // Use fullText for better matching
         let postedDate = 'Baru saja';
         const actualDatePatterns = [
           /(\d+\+?\s*hari\s+(?:yang\s+)?lalu)/i,
@@ -304,7 +308,7 @@ async function scrapeJobs(searchParams = {}) {
         ];
         
         for (const pattern of actualDatePatterns) {
-          const match = parentText.match(pattern);
+          const match = fullText.match(pattern);
           if (match && match[1]) {
             postedDate = match[1].trim();
             break;
@@ -319,7 +323,7 @@ async function scrapeJobs(searchParams = {}) {
         ];
         
         for (const pattern of statusPatterns) {
-          const match = parentText.match(pattern);
+          const match = fullText.match(pattern);
           if (match && match[1]) {
             status = match[1].trim();
             break;
