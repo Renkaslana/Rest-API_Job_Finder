@@ -117,70 +117,129 @@ async function scrapeJobs() {
           jobUrl = `https://id.jobstreet.com${jobUrl.startsWith('/') ? '' : '/'}${jobUrl}`;
         }
         
-        // Extract company - biasanya ada di link atau text "Lowongan di {Company}"
-        let company = 'N/A';
-        const companyText = $parent.text();
+        const parentText = $parent.text();
         
-        // Try pattern 1: "Lowongan di {Company}"
-        let companyMatch = companyText.match(/Lowongan di ([^\n\r]+?)(?:\s*Akan|Dibutuhkan|Ini adalah|\s*$)/i);
-        if (companyMatch) {
-          company = companyMatch[1].trim();
-        }
+        // IMPROVED: Extract company name dengan lebih akurat
+        let company = 'Perusahaan Rahasia';
         
-        // Try pattern 2: "di{Company}" after job title
-        if (company === 'N/A') {
-          companyMatch = companyText.match(/di([A-Z][^\n\r]+?)(?:\s*Akan|Dibutuhkan|Ini adalah)/);
-          if (companyMatch) {
-            company = companyMatch[1].trim();
+        // Try multiple patterns untuk company extraction
+        const companyPatterns = [
+          /Lowongan di\s+([^•\n]+?)(?:\s*•|\s*Akan|\s*Dibutuhkan|\s*\d+\s*hari|\s*$)/i,
+          /di\s+(PT\.?\s+[^•\n]+?)(?:\s*•|\s*Akan|\s*Dibutuhkan|\s*\d+\s*hari)/i,
+          /di\s+(CV\.?\s+[^•\n]+?)(?:\s*•|\s*Akan|\s*Dibutuhkan|\s*\d+\s*hari)/i,
+          /di\s+([A-Z][a-zA-Z\s&]+(?:Indonesia|Tbk|Group)?)\s*(?:•|Akan|Dibutuhkan|\d+\s*hari)/i
+        ];
+        
+        for (const pattern of companyPatterns) {
+          const match = parentText.match(pattern);
+          if (match && match[1]) {
+            company = match[1]
+              .replace(/\s+jobs?$/i, '')
+              .replace(/Jakarta|Bandung|Surabaya|Semarang|Medan/gi, '')
+              .replace(/\s+/g, ' ')
+              .trim();
+            if (company.length > 3 && company !== 'Perusahaan Rahasia') {
+              break;
+            }
           }
         }
         
-        // Clean up company name
-        company = company.replace(/\s+jobs?$/i, '').trim();
-        
-        // Extract location - cari text yang berisi nama kota
+        // IMPROVED: Extract location dengan lebih lengkap
         let location = 'Indonesia';
-        const locationMatch = companyText.match(/(Jakarta|Bandung|Surabaya|Semarang|Medan|Yogyakarta|Bali|Tangerang|Bekasi|Depok|Bogor|Malang|Makassar|Palembang|Batam|Banten|Jawa [A-Za-z]+|Kalimantan [A-Za-z]+|Sulawesi [A-Za-z]+|Aceh)/i);
-        if (locationMatch) {
-          location = locationMatch[1];
+        const locationPatterns = [
+          /(Jakarta\s+(?:Pusat|Selatan|Utara|Barat|Timur)?)/i,
+          /(Bandung)/i,
+          /(Surabaya)/i,
+          /(Tangerang(?:\s+Selatan)?)/i,
+          /(Bekasi)/i,
+          /(Depok)/i,
+          /(Bogor)/i,
+          /(Semarang)/i,
+          /(Medan)/i,
+          /(Yogyakarta)/i,
+          /(Bali)/i,
+          /(Malang)/i,
+          /(Makassar)/i,
+          /(Palembang)/i,
+          /(Batam)/i,
+          /(Banten)/i,
+          /(Jawa\s+(?:Barat|Tengah|Timur))/i,
+          /(Kalimantan\s+(?:Barat|Tengah|Timur|Selatan|Utara))/i,
+          /(Sulawesi\s+(?:Selatan|Utara|Tengah|Tenggara))/i,
+          /(Aceh)/i
+        ];
+        
+        for (const pattern of locationPatterns) {
+          const match = parentText.match(pattern);
+          if (match && match[1]) {
+            location = match[1].trim();
+            break;
+          }
         }
         
-        // Extract posted date
-        let postedDate = 'Recently';
-        const dateMatch = companyText.match(/(\d+\+? hari yang lalu|Dibutuhkan segera|Akan segera berakhir)/i);
-        if (dateMatch) {
-          postedDate = dateMatch[1];
+        // IMPROVED: Extract posted date dengan format lebih akurat
+        let postedDate = 'Baru saja';
+        const datePatterns = [
+          /(\d+\+?\s*hari\s+(?:yang\s+)?lalu)/i,
+          /(\d+\+?\s*minggu\s+(?:yang\s+)?lalu)/i,
+          /(\d+\+?\s*bulan\s+(?:yang\s+)?lalu)/i,
+          /(Dibutuhkan\s+segera)/i,
+          /(Akan\s+segera\s+berakhir)/i,
+          /(Hari\s+ini)/i,
+          /(Kemarin)/i
+        ];
+        
+        for (const pattern of datePatterns) {
+          const match = parentText.match(pattern);
+          if (match && match[1]) {
+            postedDate = match[1].trim();
+            break;
+          }
         }
         
-        // Extract salary jika ada
+        // IMPROVED: Extract salary dengan berbagai format
         let salary = null;
-        const salaryMatch = companyText.match(/Rp ([\d.,]+(?:\s*[–-]\s*Rp\s*[\d.,]+)?)\s*per\s*month/i);
-        if (salaryMatch) {
-          salary = salaryMatch[0];
+        const salaryPatterns = [
+          /Rp\s*([\d.,]+(?:\s*[kK])?)\s*[-–—]\s*Rp\s*([\d.,]+(?:\s*[kK])?)\s*(?:per|\/)\s*(?:month|bulan)/i,
+          /Rp\s*([\d.,]+)\s*[-–—]\s*Rp\s*([\d.,]+)/i,
+          /Gaji:\s*Rp\s*([\d.,]+(?:\s*[kK])?)\s*[-–—]\s*Rp\s*([\d.,]+(?:\s*[kK])?)/i,
+          /Salary:\s*Rp\s*([\d.,]+)\s*[-–—]\s*Rp\s*([\d.,]+)/i
+        ];
+        
+        for (const pattern of salaryPatterns) {
+          const match = parentText.match(pattern);
+          if (match) {
+            if (match[2]) {
+              // Range format
+              salary = `Rp ${match[1]} - Rp ${match[2]}`;
+            } else {
+              salary = match[0];
+            }
+            break;
+          }
         }
         
         // Extract description preview (snippet, bukan full description)
         let description = 'Klik link untuk melihat detail lengkap pekerjaan ini';
         
         // Cari deskripsi dari parent element
-        const parentText = $parent.text().trim();
-        
         // Hapus job title, company, location, date dari text
         let cleanText = parentText
           .replace(new RegExp(title.replace(/[()]/g, '\\$&'), 'gi'), '')
           .replace(new RegExp(company.replace(/[()]/g, '\\$&'), 'gi'), '')
           .replace(new RegExp(location.replace(/[()]/g, '\\$&'), 'gi'), '')
           .replace(new RegExp(postedDate.replace(/[()]/g, '\\$&'), 'gi'), '')
-          .replace(/Akan segera berakhir|Dibutuhkan segera|Recently/gi, '')
+          .replace(/Akan segera berakhir|Dibutuhkan segera|Baru saja|Recently/gi, '')
           .replace(/Ini adalah lowongan kerja|Full time|Kontrak|Paruh waktu/gi, '')
-          .replace(/di\s+PT\.?\s+[A-Z][^.!?]+/gi, '') // Remove company mentions
-          .replace(/Jakarta|Surabaya|Bandung|Semarang|Medan/gi, '') // Remove cities
-          .replace(/Jawa (Barat|Tengah|Timur)|Banten|Aceh|Kalimantan/gi, '') // Remove provinces
-          .replace(/Rp\s*[\d.,]+/gi, '') // Remove salary
+          .replace(/Lowongan di|di\s+PT\.?\s+[A-Z][^.!?]+/gi, '') // Remove company mentions
+          .replace(/Jakarta|Surabaya|Bandung|Semarang|Medan|Tangerang|Bekasi/gi, '') // Remove cities
+          .replace(/Jawa (Barat|Tengah|Timur)|Banten|Aceh|Kalimantan|Sulawesi/gi, '') // Remove provinces
+          .replace(/Rp\s*[\d.,]+(?:\s*[kK])?/gi, '') // Remove salary mentions
+          .replace(/\d+\s*(?:hari|minggu|bulan)\s+(?:yang\s+)?lalu/gi, '') // Remove date mentions
           .replace(/\s+/g, ' ')
           .trim();
         
-        // Ambil 100 karakter pertama yang tersisa setelah cleaning
+        // Ambil 150 karakter pertama yang tersisa setelah cleaning
         if (cleanText.length > 50) {
           description = cleanText.substring(0, 150).trim();
           if (description.length === 150) {
