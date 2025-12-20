@@ -15,8 +15,56 @@ const fetch = require('node-fetch');
 const cheerio = require('cheerio');
 
 /**
+ * JobStreet Classification Mapping
+ * Map kategori LokerID ke URL slug JobStreet
+ * Source: https://id.jobstreet.com/
+ */
+const JOBSTREET_CLASSIFICATIONS = {
+  'IT': 'information-communication-technology',
+  'Teknologi Informasi': 'information-communication-technology',
+  'Design': 'advertising-arts-media',
+  'Desain': 'advertising-arts-media',
+  'Marketing': 'marketing-communications',
+  'Pemasaran': 'marketing-communications',
+  'Sales': 'sales',
+  'Penjualan': 'sales',
+  'Finance': 'accounting',
+  'Keuangan': 'accounting',
+  'Akuntansi': 'accounting',
+  'HR': 'human-resources-recruitment',
+  'Customer Service': 'call-centre-customer-service',
+  'Layanan Pelanggan': 'call-centre-customer-service',
+  'Operations': 'manufacturing-transport-logistics',
+  'Operasional': 'manufacturing-transport-logistics',
+  'Engineering': 'engineering',
+  'Teknik': 'engineering',
+  'Healthcare': 'healthcare-medical',
+  'Kesehatan': 'healthcare-medical',
+  'Education': 'education-training',
+  'Pendidikan': 'education-training',
+  'Legal': 'legal',
+  'Hukum': 'legal',
+  'Real Estate': 'real-estate-property',
+  'Properti': 'real-estate-property',
+  'Hospitality': 'hospitality-tourism',
+  'Perhotelan': 'hospitality-tourism',
+  'Retail': 'retail-consumer-products',
+  'Ritel': 'retail-consumer-products',
+  'Construction': 'construction',
+  'Konstruksi': 'construction',
+  'Banking': 'banking-financial-services',
+  'Perbankan': 'banking-financial-services'
+};
+
+/**
  * Build JobStreet search URL dynamically based on user parameters
  * SEARCH-BASED SCRAPING: Only scrape search results, not all data
+ * 
+ * SUPPORTS JOBSTREET NATIVE FILTERS:
+ * - Keyword search (q)
+ * - Location filter (where)
+ * - Category/Classification (jobs-in-[category])
+ * - Pagination (page)
  * 
  * @param {Object} params - Search parameters
  * @param {string} params.q - Keyword (job title or skill)
@@ -28,8 +76,21 @@ const cheerio = require('cheerio');
 function buildJobStreetSearchURL(params = {}) {
   const { q, location, category, page = 1 } = params;
   
-  // Base JobStreet search URL
+  // Base JobStreet URL with optional classification
   let url = 'https://id.jobstreet.com/id/jobs';
+  
+  // Add classification to URL path if available
+  if (category && category.trim() && category !== 'Semua') {
+    const categorySlug = JOBSTREET_CLASSIFICATIONS[category.trim()];
+    if (categorySlug) {
+      url += `-in-${categorySlug}`;
+      console.log(`Using JobStreet classification: ${category} -> ${categorySlug}`);
+    }
+  } else {
+    // Default: all jobs in Indonesia
+    url += '/in-Indonesia';
+  }
+  
   const queryParams = [];
   
   // Add keyword search
@@ -47,12 +108,9 @@ function buildJobStreetSearchURL(params = {}) {
     queryParams.push(`page=${page}`);
   }
   
-  // Build final URL
+  // Build final URL with query parameters
   if (queryParams.length > 0) {
     url += '?' + queryParams.join('&');
-  } else {
-    // Default: all jobs in Indonesia
-    url += '/in-Indonesia';
   }
   
   return url;

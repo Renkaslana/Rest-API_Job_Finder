@@ -203,14 +203,20 @@ module.exports = async (req, res) => {
     /**
      * SEARCH-BASED SCRAPING IMPLEMENTATION
      * 
-     * Pass search parameters to scraper to build dynamic JobStreet URL
-     * JobStreet will do the heavy lifting of filtering
-     * We only scrape the relevant search results
+     * ✅ PRIMARY FILTERS (Passed to JobStreet URL):
+     * - q: Keyword search
+     * - location: Location filter  
+     * - category: Classification filter (NEW!)
+     * - page: Pagination
+     * 
+     * JobStreet handles these natively = FASTER & MORE ACCURATE!
+     * No need for server-side filtering of these parameters
      */
     let jobs = await scrapeJobs({
       q: keyword,           // Keyword search
       location: location,   // Location filter
-      page: pageNum        // Pagination
+      category: category,   // ✅ Classification filter (JobStreet native)
+      page: pageNum         // Pagination
     });
 
     // Add category field to each job
@@ -219,34 +225,26 @@ module.exports = async (req, res) => {
       category: extractCategory(job)
     }));
 
-    // Apply filters
+    /**
+     * ⚠️ SECONDARY FILTERS (Applied server-side only if needed)
+     * 
+     * These filters are NOT supported by JobStreet natively,
+     * so we filter them on our server after scraping:
+     * - salaryMin: Minimum salary filter
+     * - jobType: Job type (full-time, part-time, etc)
+     */
     let filteredJobs = jobs;
 
-    // Filter by keyword
-    if (keyword) {
-      filteredJobs = filteredJobs.filter(job => matchesKeyword(job, keyword));
-      console.log(`[Search API] After keyword filter: ${filteredJobs.length} jobs`);
-    }
+    // Note: keyword, category, location are already filtered by JobStreet!
+    // No need to filter again (would be redundant and slower)
 
-    // Filter by category
-    if (category) {
-      filteredJobs = filteredJobs.filter(job => matchesCategory(job, category));
-      console.log(`[Search API] After category filter: ${filteredJobs.length} jobs`);
-    }
-
-    // Filter by location
-    if (location) {
-      filteredJobs = filteredJobs.filter(job => matchesLocation(job, location));
-      console.log(`[Search API] After location filter: ${filteredJobs.length} jobs`);
-    }
-
-    // Filter by minimum salary
+    // Filter by minimum salary (JobStreet doesn't support this)
     if (salaryMin) {
       filteredJobs = filteredJobs.filter(job => matchesSalaryMin(job, salaryMin));
       console.log(`[Search API] After salary filter: ${filteredJobs.length} jobs`);
     }
 
-    // Filter by job type
+    // Filter by job type (JobStreet doesn't support this)
     if (jobType) {
       filteredJobs = filteredJobs.filter(job => matchesJobType(job, jobType));
       console.log(`[Search API] After job type filter: ${filteredJobs.length} jobs`);
