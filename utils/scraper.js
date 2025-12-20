@@ -15,60 +15,69 @@ const fetch = require('node-fetch');
 const cheerio = require('cheerio');
 
 /**
- * JobStreet Classification Mapping
- * Map kategori LokerID ke URL slug JobStreet
- * Source: https://id.jobstreet.com/
+ * Extract job category from title and description
+ * 
+ * @param {string} title - Job title
+ * @param {string} description - Job description
+ * @param {string} fullText - Full text content
+ * @returns {string} Detected category
  */
-const JOBSTREET_CLASSIFICATIONS = {
-  'IT': 'information-communication-technology',
-  'Teknologi Informasi': 'information-communication-technology',
-  'Design': 'advertising-arts-media',
-  'Desain': 'advertising-arts-media',
-  'Marketing': 'marketing-communications',
-  'Pemasaran': 'marketing-communications',
-  'Sales': 'sales',
-  'Penjualan': 'sales',
-  'Finance': 'accounting',
-  'Keuangan': 'accounting',
-  'Akuntansi': 'accounting',
-  'HR': 'human-resources-recruitment',
-  'Customer Service': 'call-centre-customer-service',
-  'Layanan Pelanggan': 'call-centre-customer-service',
-  'Operations': 'manufacturing-transport-logistics',
-  'Operasional': 'manufacturing-transport-logistics',
-  'Engineering': 'engineering',
-  'Teknik': 'engineering',
-  'Healthcare': 'healthcare-medical',
-  'Kesehatan': 'healthcare-medical',
-  'Education': 'education-training',
-  'Pendidikan': 'education-training',
-  'Legal': 'legal',
-  'Hukum': 'legal',
-  'Real Estate': 'real-estate-property',
-  'Properti': 'real-estate-property',
-  'Hospitality': 'hospitality-tourism',
-  'Perhotelan': 'hospitality-tourism',
-  'Retail': 'retail-consumer-products',
-  'Ritel': 'retail-consumer-products',
-  'Construction': 'construction',
-  'Konstruksi': 'construction',
-  'Banking': 'banking-financial-services',
-  'Perbankan': 'banking-financial-services'
-};
+function extractJobCategory(title, description, fullText = '') {
+  const text = `${title} ${description} ${fullText}`.toLowerCase();
+  
+  // Category detection patterns (in priority order)
+  const categoryPatterns = [
+    { name: 'Akuntansi', keywords: ['akuntansi', 'accounting', 'akuntan', 'finance', 'keuangan', 'audit', 'tax', 'pajak'] },
+    { name: 'Administrasi & Dukungan Perkantoran', keywords: ['administrasi', 'admin', 'sekretaris', 'office', 'staff admin', 'support', 'dukungan perkantoran'] },
+    { name: 'IT & Teknologi', keywords: ['developer', 'programmer', 'software', 'web', 'mobile', 'it', 'teknologi', 'system', 'network', 'devops', 'frontend', 'backend'] },
+    { name: 'Periklanan, Seni & Media', keywords: ['designer', 'design', 'graphic', 'ui/ux', 'creative', 'seni', 'media', 'konten', 'periklanan'] },
+    { name: 'Perbankan & Layanan Keuangan', keywords: ['bank', 'perbankan', 'teller', 'credit', 'kredit', 'layanan keuangan', 'financial services'] },
+    { name: 'Layanan Pelanggan', keywords: ['customer service', 'cs', 'call center', 'support', 'helpdesk', 'layanan pelanggan'] },
+    { name: 'Teknik', keywords: ['engineer', 'engineering', 'teknik', 'mechanical', 'electrical', 'civil', 'sipil'] },
+    { name: 'Manufaktur', keywords: ['manufaktur', 'produksi', 'production', 'pabrik', 'factory', 'quality control', 'qc', 'ppic'] },
+    { name: 'Pemasaran & Komunikasi', keywords: ['marketing', 'pemasaran', 'digital marketing', 'seo', 'social media', 'brand', 'komunikasi'] },
+    { name: 'Penjualan', keywords: ['sales', 'penjualan', 'business development', 'account', 'salesman'] },
+    { name: 'Kesehatan & Medis', keywords: ['nurse', 'perawat', 'doctor', 'dokter', 'medical', 'medis', 'kesehatan', 'farmasi', 'pharmacy'] },
+    { name: 'Perhotelan & Pariwisata', keywords: ['hotel', 'hospitality', 'pariwisata', 'tourism', 'travel', 'restaurant', 'chef', 'waiter'] },
+    { name: 'Pendidikan & Pelatihan', keywords: ['teacher', 'guru', 'pendidikan', 'education', 'training', 'pelatihan', 'tutor', 'dosen', 'lecturer'] },
+    { name: 'HR & Rekrutmen', keywords: ['hr', 'human resource', 'recruitment', 'rekrutmen', 'talent', 'people', 'hrd'] },
+    { name: 'Logistik & Transportasi', keywords: ['logistik', 'logistics', 'transport', 'transportasi', 'driver', 'kurir', 'warehouse', 'gudang', 'supply chain'] },
+    { name: 'Retail & Produk Konsumen', keywords: ['retail', 'ritel', 'cashier', 'kasir', 'store', 'toko', 'konsumen', 'consumer'] },
+    { name: 'Properti & Real Estate', keywords: ['property', 'properti', 'real estate', 'estate'] },
+    { name: 'Hukum', keywords: ['legal', 'hukum', 'lawyer', 'pengacara', 'notaris'] },
+    { name: 'Konstruksi', keywords: ['konstruksi', 'construction', 'building', 'arsitek', 'architect'] },
+    { name: 'Pertambangan & Energi', keywords: ['mining', 'pertambangan', 'oil', 'gas', 'energi', 'energy', 'tambang'] }
+  ];
+  
+  // Find matching category
+  for (const pattern of categoryPatterns) {
+    if (pattern.keywords.some(keyword => text.includes(keyword))) {
+      return pattern.name;
+    }
+  }
+  
+  return 'Lainnya'; // Default category
+}
 
 /**
  * Build JobStreet search URL dynamically based on user parameters
- * SEARCH-BASED SCRAPING: Only scrape search results, not all data
+ * LOCATION-FIRST SEARCH STRATEGY (JobStreet-style)
  * 
- * SUPPORTS JOBSTREET NATIVE FILTERS:
- * - Keyword search (q)
- * - Location filter (where)
- * - Category/Classification (jobs-in-[category])
- * - Pagination (page)
+ * URL Construction Rules:
+ * 1. Base: https://id.jobstreet.com/id/jobs
+ * 2. Location (PRIMARY): /in-{location}
+ * 3. Keyword: ?q=keyword
+ * 4. Classification: ?classification=category
+ * 5. Page: ?page=number
+ * 
+ * Examples:
+ * - location only: /jobs/in-Tegal
+ * - location + category: /jobs/in-Tegal?classification=Akuntansi
+ * - keyword + location: /jobs/in-Tegal?q=admin
  * 
  * @param {Object} params - Search parameters
  * @param {string} params.q - Keyword (job title or skill)
- * @param {string} params.location - Location (city or region)
+ * @param {string} params.location - Location (city or region) - PRIMARY
  * @param {string} params.category - Category/classification
  * @param {number} params.page - Page number for pagination
  * @returns {string} JobStreet search URL
@@ -76,18 +85,15 @@ const JOBSTREET_CLASSIFICATIONS = {
 function buildJobStreetSearchURL(params = {}) {
   const { q, location, category, page = 1 } = params;
   
-  // Base JobStreet URL with optional classification
+  // Base JobStreet URL
   let url = 'https://id.jobstreet.com/id/jobs';
   
-  // Add classification to URL path if available
-  if (category && category.trim() && category !== 'Semua') {
-    const categorySlug = JOBSTREET_CLASSIFICATIONS[category.trim()];
-    if (categorySlug) {
-      url += `-in-${categorySlug}`;
-      console.log(`Using JobStreet classification: ${category} -> ${categorySlug}`);
-    }
+  // LOCATION FIRST (Primary search context)
+  if (location && location.trim() && location !== 'Semua Lokasi') {
+    url += `/in-${encodeURIComponent(location.trim())}`;
+    console.log(`[URL Builder] Location-first search: ${location}`);
   } else {
-    // Default: all jobs in Indonesia
+    // Fallback: all Indonesia
     url += '/in-Indonesia';
   }
   
@@ -98,9 +104,10 @@ function buildJobStreetSearchURL(params = {}) {
     queryParams.push(`q=${encodeURIComponent(q.trim())}`);
   }
   
-  // Add location filter
-  if (location && location.trim() && location !== 'Semua Lokasi') {
-    queryParams.push(`where=${encodeURIComponent(location.trim())}`);
+  // Add classification filter (as query param, not URL path)
+  if (category && category.trim() && category !== 'Semua') {
+    queryParams.push(`classification=${encodeURIComponent(category.trim())}`);
+    console.log(`[URL Builder] Classification filter: ${category}`);
   }
   
   // Add pagination
@@ -382,10 +389,14 @@ async function scrapeJobs(searchParams = {}) {
 
         // Validasi: hanya tambahkan jika ada title dan jobUrl valid
         if (title && jobUrl && title.length > 5) {
+          // Extract category from job content
+          const category = extractJobCategory(title, description, parentText);
+          
           const jobData = {
             job_title: title,
             company: company,
             location: location,
+            category: category, // ✅ ADDED: Dynamic category
             posted_date: postedDate,
             description: description || 'Lihat detail di source untuk informasi lengkap',
             source_name: 'JobStreet Indonesia',
@@ -481,4 +492,46 @@ function getSampleJobs() {
   ];
 }
 
+/**
+ * Extract dynamic classifications from scraped jobs
+ * CONTEXT-AWARE CLASSIFICATION EXTRACTION
+ * 
+ * This function analyzes job.category from scraped results
+ * and generates classification filters with counts.
+ * 
+ * How it works:
+ * 1. Extract job.category from each job
+ * 2. Group jobs by category
+ * 3. Count occurrences
+ * 4. Sort by count (descending)
+ * 5. Return as array of {name, count}
+ * 
+ * @param {Array} jobs - Array of scraped job objects
+ * @returns {Array} Array of {name: string, count: number}
+ */
+function extractClassifications(jobs) {
+  if (!jobs || jobs.length === 0) {
+    return [];
+  }
+  
+  // Count jobs by category
+  const categoryCount = {};
+  
+  jobs.forEach(job => {
+    const category = job.category || 'Lainnya';
+    categoryCount[category] = (categoryCount[category] || 0) + 1;
+  });
+  
+  // Convert to array and sort by count (descending)
+  const classifications = Object.entries(categoryCount)
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count);
+  
+  console.log(`[Scraper] Extracted ${classifications.length} classifications from ${jobs.length} jobs`);
+  
+  return classifications;
+}
+
 module.exports = scrapeJobs;
+module.exports.extractClassifications = extractClassifications;
+module.exports.buildJobStreetSearchURL = buildJobStreetSearchURL;

@@ -1,28 +1,33 @@
 /**
- * Job Finder API - Search & Filter Endpoint
+ * Job Finder API - Search Endpoint (LOCATION-FIRST STRATEGY)
  * 
  * Endpoint: GET /api/search
  * 
- * Query Parameters:
- * - q: Search keyword (job title, company, description)
- * - category: Filter by job category (IT, Marketing, Design, etc)
- * - location: Filter by location (Jakarta, Bandung, etc)
- * - salaryMin: Minimum salary filter (numeric)
- * - jobType: Filter by job type (full-time, part-time, contract, internship)
- * - sort: Sort order (latest, salary, relevance)
- * - page: Page number (default: 1)
- * - limit: Results per page (default: 30, max: 100)
+ * CORE CONCEPT: Search-Result Scraping (NOT crawling)
+ * SEARCH IS CONTEXTUAL AND INCREMENTAL (JobStreet-style)
+ * 
+ * Workflow:
+ * 1. Perform BASE SEARCH (usually by location)
+ * 2. Dynamically extract classifications from results
+ * 3. Allow users to refine by selecting a classification
+ * 
+ * Query Parameters (ALL OPTIONAL):
+ * - q: Job keyword
+ * - location: City or region (PRIMARY search context)
+ * - category: Job classification (for refinement)
+ * - page: Pagination
  * 
  * Examples:
- * - /api/search?q=developer&category=IT&location=Jakarta
- * - /api/search?salaryMin=5000000&sort=salary&limit=20
- * - /api/search?jobType=full-time&page=2
+ * - /api/search?location=Tegal
+ * - /api/search?location=Tegal&category=Akuntansi
+ * - /api/search?q=admin&location=Tegal
  * 
  * Cache Strategy:
- * - 30 minutes cache for search results
+ * - 10-15 minutes cache for search results
  */
 
 const scrapeJobs = require('../utils/scraper');
+const { extractClassifications } = require('../utils/scraper');
 
 /**
  * Normalize text for better matching
@@ -168,155 +173,104 @@ function extractCategory(job) {
 }
 
 /**
- * Main search handler
+ * Main search handler - LOCATION-FIRST STRATEGY
  */
 module.exports = async (req, res) => {
   try {
     const { 
-      q: keyword = '',
-      category = '',
-      location = '',
-      salaryMin = '',
-      jobType = '',
-      sort = 'latest',
-      page = '1',
-      limit = '30' 
+      q = '',           // Keyword (optional)
+      location = '',    // Location (PRIMARY)
+      category = '',    // Classification (for refinement)
+      page = '1'        // Pagination
     } = req.query;
     
     const pageNum = Math.max(parseInt(page) || 1, 1);
-    const limitNum = Math.min(parseInt(limit) || 30, 100);
-    const offset = (pageNum - 1) * limitNum;
 
-    console.log('[Search API] Query:', { 
-      keyword, category, location, salaryMin, jobType, sort, page: pageNum, limit: limitNum 
+    console.log('[Search API] LOCATION-FIRST Search:', { 
+      q, location, category, page: pageNum 
     });
 
     /**
      * Cache Strategy:
-     * - 15 minutes cache for search results (following best practice)
+     * Cache by final JobStreet URL for 10-15 minutes
      */
     res.setHeader(
-      'Cache-Control', 
+      'Cache-Control',
       's-maxage=900, stale-while-revalidate'
     );
 
     /**
-     * SEARCH-BASED SCRAPING IMPLEMENTATION
+     * STEP 1: Scrape jobs from JobStreet
      * 
-     * ✅ PRIMARY FILTERS (Passed to JobStreet URL):
-     * - q: Keyword search
-     * - location: Location filter  
-     * - category: Classification filter (NEW!)
-     * - page: Pagination
-     * 
-     * JobStreet handles these natively = FASTER & MORE ACCURATE!
-     * No need for server-side filtering of these parameters
+     * URL will be built as:
+     * - location-only: /jobs/in-Tegal
+     * - location + category: /jobs/in-Tegal?classification=Akuntansi
+     * - keyword + location: /jobs/in-Tegal?q=admin
      */
-    let jobs = await scrapeJobs({
-      q: keyword,           // Keyword search
-      location: location,   // Location filter
-      category: category,   // ✅ Classification filter (JobStreet native)
-      page: pageNum         // Pagination
+    const scrapedJobs = await scrapeJobs({
+      q: q || null,
+      location: location || null,
+      category: category || null,
+      page: pageNum
     });
 
-    // Add category field to each job
-    jobs = jobs.map(job => ({
-      ...job,
-      category: extractCategory(job)
+    console.log(`[Search API] Scraped ${scrapedJobs.length} jobs from JobStreet`);
+
+    /**
+     * STEP 2: Extract dynamic classifications from results
+     * 
+     * This analyzes job.category from scraped results
+     * and generates filters with counts.
+     * 
+     * Only computed if category filter is NOT applied
+     * (to show available refinement options)
+     */
+    const classifications = extractClassifications(scrapedJobs);
+    
+    console.log(`[Search API] Extracted ${classifications.length} classifications`);
+
+    /**
+     * STEP 3: Transform jobs to API format
+     */
+    const jobs = scrapedJobs.map(job => ({
+      title: job.job_title,
+      company: job.company,
+      location: job.location,
+      category: job.category || 'Lainnya',
+      salary: job.salary_range || null,
+      postedAgo: job.posted_date,
+      detailUrl: job.source_url,
+      description: job.description || null
     }));
 
     /**
-     * ⚠️ SECONDARY FILTERS (Applied server-side only if needed)
-     * 
-     * These filters are NOT supported by JobStreet natively,
-     * so we filter them on our server after scraping:
-     * - salaryMin: Minimum salary filter
-     * - jobType: Job type (full-time, part-time, etc)
+     * STEP 4: Build response with required structure
      */
-    let filteredJobs = jobs;
+    const response = {
+      query: {
+        q: q || null,
+        location: location || null,
+        category: category || null,
+        page: pageNum
+      },
+      meta: {
+        totalJobs: jobs.length,
+        source: 'jobstreet',
+        scrapedAt: new Date().toISOString()
+      },
+      classifications: classifications,
+      jobs: jobs
+    };
 
-    // Note: keyword, category, location are already filtered by JobStreet!
-    // No need to filter again (would be redundant and slower)
-
-    // Filter by minimum salary (JobStreet doesn't support this)
-    if (salaryMin) {
-      filteredJobs = filteredJobs.filter(job => matchesSalaryMin(job, salaryMin));
-      console.log(`[Search API] After salary filter: ${filteredJobs.length} jobs`);
-    }
-
-    // Filter by job type (JobStreet doesn't support this)
-    if (jobType) {
-      filteredJobs = filteredJobs.filter(job => matchesJobType(job, jobType));
-      console.log(`[Search API] After job type filter: ${filteredJobs.length} jobs`);
-    }
-
-    // Sort results
-    if (sort === 'salary') {
-      // Jobs with salary first, then alphabetical
-      filteredJobs.sort((a, b) => {
-        const aHasSalary = a.salary_range ? 1 : 0;
-        const bHasSalary = b.salary_range ? 1 : 0;
-        if (aHasSalary !== bHasSalary) return bHasSalary - aHasSalary;
-        return a.job_title.localeCompare(b.job_title);
-      });
-    } else if (sort === 'relevance' && keyword) {
-      // Simple relevance: keyword in title ranks higher
-      const normalizedKeyword = normalizeText(keyword);
-      filteredJobs.sort((a, b) => {
-        const aInTitle = normalizeText(a.job_title).includes(normalizedKeyword) ? 1 : 0;
-        const bInTitle = normalizeText(b.job_title).includes(normalizedKeyword) ? 1 : 0;
-        return bInTitle - aInTitle;
-      });
-    }
-    // Default 'latest': no sorting needed (scraper returns latest first)
-
-    // Calculate pagination
-    const totalResults = filteredJobs.length;
-    const totalPages = Math.ceil(totalResults / limitNum);
-    const paginatedJobs = filteredJobs.slice(offset, offset + limitNum);
-
-    // Build filter info for response
-    const appliedFilters = {};
-    if (keyword) appliedFilters.keyword = keyword;
-    if (category) appliedFilters.category = category;
-    if (location) appliedFilters.location = location;
-    if (salaryMin) appliedFilters.salaryMin = salaryMin;
-    if (jobType) appliedFilters.jobType = jobType;
-
-    // Success response
-    return res.status(200).json({
-      status: 'success',
-      creator: 'Job Finder API',
-      statusCode: 200,
-      statusMessage: 'OK',
-      message: `Found ${totalResults} jobs matching your criteria`,
-      ok: true,
-      updated_at: new Date().toISOString(),
-      data: {
-        jobs: paginatedJobs,
-        metadata: {
-          total_results: totalResults,
-          page: pageNum,
-          limit: limitNum,
-          total_pages: totalPages,
-          has_next: pageNum < totalPages,
-          has_previous: pageNum > 1,
-          sort_by: sort,
-          filters_applied: appliedFilters
-        }
-      }
-    });
+    return res.status(200).json(response);
 
   } catch (error) {
     console.error('[Search API] Error:', error);
     
     return res.status(500).json({
-      status: 'error',
-      statusCode: 500,
-      statusMessage: 'Internal Server Error',
+      error: 'Internal Server Error',
       message: 'Failed to search jobs',
-      ok: false,
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal error'
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 };
