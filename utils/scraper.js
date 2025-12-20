@@ -532,6 +532,121 @@ function extractClassifications(jobs) {
   return classifications;
 }
 
+/**
+ * Scrape jobs directly from a URL
+ * Simpler version that doesn't use buildJobStreetSearchURL
+ * Used for static URLs like /jobs?tags=new or /jobs
+ * 
+ * @param {string} url - Direct URL to scrape
+ * @returns {Promise<Array>} Array of job objects
+ */
+async function scrapeJobsFromURL(url) {
+  try {
+    console.log(`[Scraper] Direct scraping from: ${url}`);
+    
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'JobFinderBot/2.0 (Educational Purpose)',
+        'Accept': 'text/html,application/xhtml+xml',
+        'Accept-Language': 'id-ID,id;q=0.9,en;q=0.8'
+      },
+      timeout: 10000 // 10 second timeout
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    const html = await response.text();
+    const $ = cheerio.load(html);
+    
+    const jobs = [];
+
+    // Parse job listings (same logic as scrapeJobs)
+    $('h1, h3').each((index, element) => {
+      const $element = $(element);
+      const $link = $element.find('a[href*="/id/job/"]').first();
+      
+      if ($link.length === 0) {
+        return;
+      }
+
+      const title = $link.text().trim();
+      const jobUrl = $link.attr('href');
+      
+      if (!title || !jobUrl) {
+        return;
+      }
+
+      const fullUrl = jobUrl.startsWith('http') 
+        ? jobUrl 
+        : `https://id.jobstreet.com${jobUrl}`;
+
+      // Extract additional info from nearby elements
+      const $parent = $element.closest('article, div[data-automation="job-card"], div[class*="job"]');
+      
+      let company = 'Perusahaan Rahasia';
+      let location = 'Indonesia';
+      let salary = null;
+      let postedAgo = 'Baru saja';
+      let description = 'Klik link untuk melihat detail lengkap pekerjaan ini';
+
+      // Try to find company name
+      const companyText = $parent.find('a[data-automation*="company"], span[data-automation*="company"]').first().text().trim();
+      if (companyText) {
+        company = companyText;
+      }
+
+      // Try to find location
+      const locationText = $parent.find('span[data-automation*="location"], a[data-automation*="location"]').first().text().trim();
+      if (locationText) {
+        location = locationText;
+      }
+
+      // Try to find salary
+      const salaryText = $parent.find('span[data-automation*="salary"]').first().text().trim();
+      if (salaryText && salaryText.toLowerCase().includes('rp')) {
+        salary = salaryText;
+      }
+
+      // Try to find posted date
+      const postedText = $parent.find('time, span[data-automation*="posted"]').first().text().trim();
+      if (postedText) {
+        postedAgo = postedText;
+      }
+
+      // Try to find job description
+      const descriptionText = $parent.find('span[data-automation*="description"], div[class*="description"]').first().text().trim();
+      if (descriptionText && descriptionText.length > 10) {
+        description = descriptionText.substring(0, 200);
+      }
+
+      // Extract category from title and description
+      const category = extractJobCategory(title, description);
+
+      jobs.push({
+        title,
+        company,
+        location,
+        category,
+        salary,
+        postedAgo,
+        detailUrl: fullUrl,
+        description
+      });
+    });
+
+    console.log(`[Scraper] Found ${jobs.length} jobs from ${url}`);
+    
+    return jobs;
+
+  } catch (error) {
+    console.error('[Scraper] Error:', error.message);
+    throw error;
+  }
+}
+
 module.exports = scrapeJobs;
+module.exports.scrapeJobsFromURL = scrapeJobsFromURL;
 module.exports.extractClassifications = extractClassifications;
 module.exports.buildJobStreetSearchURL = buildJobStreetSearchURL;
