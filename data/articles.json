@@ -1,0 +1,151 @@
+{
+  "success": true,
+  "data": [
+    {
+      "id": "1",
+      "title": "Tips Membuat CV yang Menarik untuk Fresh Graduate",
+      "slug": "tips-membuat-cv-fresh-graduate",
+      "category": "career-development",
+      "excerpt": "Pelajari cara membuat CV yang menarik perhatian recruiter meski Anda fresh graduate tanpa pengalaman kerja.",
+      "featuredImage": "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=800",
+      "readTime": 5,
+      "publishedAt": "2024-12-15",
+      "author": {
+        "name": "Tim LokerID",
+        "avatar": "https://ui-avatars.com/api/?name=LokerID&background=6366f1&color=fff"
+      }
+    },
+    {
+      "id": "2",
+      "title": "Persiapan Interview Kerja: Hal-hal yang Harus Diperhatikan",
+      "slug": "persiapan-interview-kerja",
+      "category": "career-development",
+      "excerpt": "Panduan lengkap untuk mempersiapkan diri menghadapi interview kerja, dari riset perusahaan hingga menjawab pertanyaan.",
+      "featuredImage": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800",
+      "readTime": 7,
+      "publishedAt": "2024-12-12",
+      "author": {
+        "name": "Tim LokerID",
+        "avatar": "https://ui-avatars.com/api/?name=LokerID&background=6366f1&color=fff"
+      }
+    },
+    {
+      "id": "3",
+      "title": "Mengenal Berbagai Jenis Gaji dan Benefit di Perusahaan",
+      "slug": "jenis-gaji-dan-benefit",
+      "category": "salary-advice",
+      "excerpt": "Pahami komponen gaji, tunjangan, dan benefit yang biasa ditawarkan perusahaan di Indonesia.",
+      "featuredImage": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800",
+      "readTime": 6,
+      "publishedAt": "2024-12-10",
+      "author": {
+        "name": "Tim LokerID",
+        "avatar": "https://ui-avatars.com/api/?name=LokerID&background=6366f1&color=fff"
+      }
+    },
+    {
+      "id": "4",
+      "title": "Work-Life Balance: Pentingnya Keseimbangan Kerja dan Kehidupan",
+      "slug": "work-life-balance",
+      "category": "workplace-wellbeing",
+      "excerpt": "Tips menjaga keseimbangan antara pekerjaan dan kehidupan pribadi untuk kesehatan mental yang lebih baik.",
+      "featuredImage": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800",
+      "readTime": 5,
+      "publishedAt": "2024-12-08",
+      "author": {
+        "name": "Tim LokerID",
+        "avatar": "https://ui-avatars.com/api/?name=LokerID&background=6366f1&color=fff"
+      }
+    },
+    {
+      "id": "5",
+      "title": "Cara Negosiasi Gaji yang Efektif untuk Pemula",
+      "slug": "negosiasi-gaji-pemula",
+      "category": "salary-advice",
+      "excerpt": "Strategi dan tips negosiasi gaji yang tepat untuk fresh graduate dan job seeker pemula.",
+      "featuredImage": "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800",
+      "readTime": 8,
+      "publishedAt": "2024-12-05",
+      "author": {
+        "name": "Tim LokerID",
+        "avatar": "https://ui-avatars.com/api/?name=LokerID&background=6366f1&color=fff"
+      }
+    },
+    {
+      "id": "6",
+      "title": "Mengatasi Stress di Tempat Kerja",
+      "slug": "mengatasi-stress-kerja",
+      "category": "workplace-wellbeing",
+      "excerpt": "Teknik dan cara efektif untuk mengelola stress di lingkungan kerja yang penuh tekanan.",
+      "featuredImage": "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800",
+      "readTime": 6,
+      "publishedAt": "2024-12-03",
+      "author": {
+        "name": "Tim LokerID",
+        "avatar": "https://ui-avatars.com/api/?name=LokerID&background=6366f1&color=fff"
+      }
+    },
+    {
+      "id": "7",
+      "title": "Skill yang Dibutuhkan di Era Digital",
+      "slug": "skill-era-digital",
+      "category": "career-development",
+      "excerpt": "Pelajari skill-skill penting yang wajib dikuasai untuk bersaing di dunia kerja era digital.",
+      "featuredImage": "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800",
+      "readTime": 7,
+      "publishedAt": "2024-12-01",
+      "author": {
+        "name": "Tim LokerID",
+        "avatar": "https://ui-avatars.com/api/?name=LokerID&background=6366f1&color=fff"
+      }
+    },
+    {
+      "id": "8",
+      "title": "Membangun Personal Branding di LinkedIn",
+      "slug": "personal-branding-linkedin",
+      "category": "career-development",
+      "excerpt": "Panduan lengkap membangun personal branding di LinkedIn untuk meningkatkan peluang karir.",
+      "featuredImage": "https://images.unsplash.com/photo-1611944212129-29977ae1398c?w=800",
+      "readTime": 9,
+      "publishedAt": "2024-11-28",
+      "author": {
+        "name": "Tim LokerID",
+        "avatar": "https://ui-avatars.com/api/?name=LokerID&background=6366f1&color=fff"
+      }
+    },
+    {
+      "id": "9",
+      "title": "Pentingnya Continuous Learning untuk Karir",
+      "slug": "continuous-learning",
+      "category": "career-development",
+      "excerpt": "Mengapa pembelajaran berkelanjutan penting untuk pengembangan karir jangka panjang.",
+      "featuredImage": "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800",
+      "readTime": 5,
+      "publishedAt": "2024-11-25",
+      "author": {
+        "name": "Tim LokerID",
+        "avatar": "https://ui-avatars.com/api/?name=LokerID&background=6366f1&color=fff"
+      }
+    },
+    {
+      "id": "10",
+      "title": "Mengenali Toxic Workplace dan Cara Mengatasinya",
+      "slug": "toxic-workplace",
+      "category": "workplace-wellbeing",
+      "excerpt": "Tanda-tanda toxic workplace dan strategi menghadapi lingkungan kerja yang tidak sehat.",
+      "featuredImage": "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=800",
+      "readTime": 8,
+      "publishedAt": "2024-11-22",
+      "author": {
+        "name": "Tim LokerID",
+        "avatar": "https://ui-avatars.com/api/?name=LokerID&background=6366f1&color=fff"
+      }
+    }
+  ],
+  "meta": {
+    "total": 10,
+    "page": 1,
+    "limit": 10,
+    "totalPages": 1
+  }
+}
