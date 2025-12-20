@@ -292,22 +292,36 @@ async function scrapeJobs(searchParams = {}) {
           }
         }
         
-        // IMPROVED: Extract posted date dengan format lebih akurat
+        // IMPROVED: Extract posted date (kapan lowongan di-post)
+        // Priority: ambil yang format "X hari/minggu/bulan yang lalu"
         let postedDate = 'Baru saja';
-        const datePatterns = [
+        const actualDatePatterns = [
           /(\d+\+?\s*hari\s+(?:yang\s+)?lalu)/i,
           /(\d+\+?\s*minggu\s+(?:yang\s+)?lalu)/i,
           /(\d+\+?\s*bulan\s+(?:yang\s+)?lalu)/i,
-          /(Dibutuhkan\s+segera)/i,
-          /(Akan\s+segera\s+berakhir)/i,
           /(Hari\s+ini)/i,
           /(Kemarin)/i
         ];
         
-        for (const pattern of datePatterns) {
+        for (const pattern of actualDatePatterns) {
           const match = parentText.match(pattern);
           if (match && match[1]) {
             postedDate = match[1].trim();
+            break;
+          }
+        }
+        
+        // IMPROVED: Extract status badge (urgency indicator)
+        let status = null;
+        const statusPatterns = [
+          /(Dibutuhkan\s+segera)/i,
+          /(Akan\s+segera\s+berakhir)/i
+        ];
+        
+        for (const pattern of statusPatterns) {
+          const match = parentText.match(pattern);
+          if (match && match[1]) {
+            status = match[1].trim();
             break;
           }
         }
@@ -415,6 +429,11 @@ async function scrapeJobs(searchParams = {}) {
           // Tambahkan salary jika ada
           if (salary) {
             jobData.salary_range = salary;
+          }
+          
+          // Tambahkan status badge jika ada (Akan segera berakhir, Dibutuhkan segera)
+          if (status) {
+            jobData.status = status;
           }
           
           // Tambahkan benefits jika ada
