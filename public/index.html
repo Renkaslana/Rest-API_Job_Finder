@@ -283,7 +283,7 @@
                 <h2 style="color: #667eea; margin-bottom: 10px;">📊 API Statistics</h2>
                 <div class="stats-grid">
                     <div class="stat-item">
-                        <div class="stat-number">8</div>
+                        <div class="stat-number">7</div>
                         <div class="stat-label">Endpoints</div>
                     </div>
                     <div class="stat-item">
@@ -349,18 +349,7 @@
                     </div>
                 </div>
 
-                <!-- Endpoint 3: Get Available Filters -->
-                <div class="endpoint-card" onclick="window.open(getBaseUrl() + '/api/filters', '_blank')">
-                    <div class="endpoint-header">
-                        <span class="method">GET</span>
-                        <span class="endpoint-url">/api/filters</span>
-                    </div>
-                    <div class="endpoint-desc">
-                        Get available filter options (categories & locations)
-                    </div>
-                </div>
-
-                <!-- Endpoint 4: Job Detail -->
+                <!-- Endpoint 3: Job Detail -->
                 <div class="endpoint-card">
                     <div class="endpoint-header">
                         <span class="method">GET</span>
@@ -377,7 +366,7 @@
 
                 <h3 style="margin: 40px 0 15px 0; color: #667eea;">🌟 JobStreet Recommendations (NEW!)</h3>
 
-                <!-- Endpoint 5: JobStreet Recommendations -->
+                <!-- Endpoint 4: JobStreet Recommendations -->
                 <div class="endpoint-card" onclick="window.open(getBaseUrl() + '/api/jobstreet?page=1&limit=20', '_blank')">
                     <div class="endpoint-header">
                         <span class="method">GET</span>
@@ -460,18 +449,15 @@ fetch('<span class="base-url"></span>/api/jobs')
   .then(res => res.json())
   .then(data => console.log(data.data.jobs));
 
-// 🆕 Search dengan filter
+// Search dengan filter
 fetch('<span class="base-url"></span>/api/search?q=developer&category=IT&location=Jakarta')
   .then(res => res.json())
   .then(data => console.log(data.data.jobs));
 
-// 🆕 Get available filters
-fetch('<span class="base-url"></span>/api/filters')
+// JobStreet recommendations
+fetch('<span class="base-url"></span>/api/jobstreet?page=1&limit=20')
   .then(res => res.json())
-  .then(data => {
-    console.log('Categories:', data.data.categories);
-    console.log('Locations:', data.data.locations);
-  });
+  .then(data => console.log(data.data));
 
 // Detail 1 job
 const jobUrl = encodeURIComponent('https://id.jobstreet.com/id/job/12345678');
@@ -486,11 +472,11 @@ fetch(`<span class="base-url"></span>/api/job?url=${jobUrl}`)
                     <pre><code># List jobs
 curl <span class="base-url"></span>/api/jobs
 
-# 🆕 Search dengan filter
+# Search dengan filter
 curl "<span class="base-url"></span>/api/search?q=developer&category=IT&location=Jakarta"
 
-# 🆕 Get filters
-curl <span class="base-url"></span>/api/filters
+# JobStreet recommendations
+curl "<span class="base-url"></span>/api/jobstreet?page=1&limit=20"
 
 # Detail job
 curl "<span class="base-url"></span>/api/job?url=https%3A%2F%2Fid.jobstreet.com%2Fid%2Fjob%2F12345"</code></pre>
@@ -505,15 +491,14 @@ curl "<span class="base-url"></span>/api/job?url=https%3A%2F%2Fid.jobstreet.com%
 response = requests.get('<span class="base-url"></span>/api/jobs')
 jobs = response.json()['data']['jobs']
 
-# 🆕 Search dengan filter
+# Search dengan filter
 params = {'q': 'developer', 'category': 'IT', 'location': 'Jakarta'}
 response = requests.get('<span class="base-url"></span>/api/search', params=params)
 filtered_jobs = response.json()['data']['jobs']
 
-# 🆕 Get available filters
-filters = requests.get('<span class="base-url"></span>/api/filters').json()['data']
-print('Categories:', [c['name'] for c in filters['categories']])
-print('Locations:', filters['locations'])
+# JobStreet recommendations
+jobstreet = requests.get('<span class="base-url"></span>/api/jobstreet?page=1&limit=20')
+recommendations = jobstreet.json()['data']
 
 # Detail job
 from urllib.parse import quote
