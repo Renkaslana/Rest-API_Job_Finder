@@ -326,26 +326,26 @@
                 </div>
 
                 <!-- Endpoint 2: Search & Filter Jobs (Updated) -->
-                <div class="endpoint-card" onclick="window.open(getBaseUrl() + '/api/search?q=developer&category=IT&location=Jakarta&salaryMin=5000000&sort=salary&page=1', '_blank')">
+                <div class="endpoint-card" onclick="window.open(getBaseUrl() + '/api/search?location=banten&classification=banking-financial-services', '_blank')">
                     <div class="endpoint-header">
                         <span class="method">GET</span>
                         <span class="endpoint-url">/api/search</span>
                     </div>
                     <div class="endpoint-desc">
-                        ✨ <strong>ENHANCED!</strong> Advanced search & filter dengan pagination
+                        ✨ <strong>FLEXIBLE!</strong> Search jobs by location (required) & classification (optional)
                     </div>
                     <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 5px; font-size: 0.85em;">
                         <strong>Query Parameters:</strong><br>
-                        • <code style="color: #667eea;">q</code> - Keyword search (title, company, description)<br>
-                        • <code style="color: #667eea;">category</code> - Filter by category (IT, Marketing, Design, etc)<br>
-                        • <code style="color: #667eea;">location</code> - Filter by location (Jakarta, Bandung, etc)<br>
-                        • <code style="color: #667eea;">salaryMin</code> - Minimum salary (numeric)<br>
-                        • <code style="color: #667eea;">jobType</code> - Job type (full-time, part-time, contract, internship)<br>
-                        • <code style="color: #667eea;">sort</code> - Sort: latest, salary, relevance<br>
-                        • <code style="color: #667eea;">page</code> - Page number (default: 1)<br>
-                        • <code style="color: #667eea;">limit</code> - Results per page (default: 30, max: 100)<br><br>
-                        <strong>Example:</strong><br>
-                        <code style="color: #667eea;">/api/search?q=developer&category=IT&salaryMin=5000000&sort=salary</code>
+                        • <code style="color: #667eea;">location</code> - Location slug (REQUIRED) - e.g., "banten", "jawa-tengah", "jakarta"<br>
+                        • <code style="color: #667eea;">classification</code> - Classification slug (optional) - e.g., "banking-financial-services", "information-technology"<br>
+                        • <code style="color: #667eea;">page</code> - Page number (default: 1)<br><br>
+                        <strong>URL Patterns:</strong><br>
+                        • Location only: <code style="color: #667eea;">/jobs/in-{location}</code><br>
+                        • Location + Classification: <code style="color: #667eea;">/jobs-in-{classification}/in-{location}</code><br><br>
+                        <strong>Examples:</strong><br>
+                        <code style="color: #667eea;">/api/search?location=banten</code><br>
+                        <code style="color: #667eea;">/api/search?location=jawa-tengah&classification=information-technology</code><br>
+                        <code style="color: #667eea;">/api/search?location=jakarta&classification=banking-financial-services&page=2</code>
                     </div>
                 </div>
 
@@ -449,10 +449,15 @@ fetch('<span class="base-url"></span>/api/jobs')
   .then(res => res.json())
   .then(data => console.log(data.data.jobs));
 
-// Search dengan filter
-fetch('<span class="base-url"></span>/api/search?q=developer&category=IT&location=Jakarta')
+// Flexible search by location
+fetch('<span class="base-url"></span>/api/search?location=banten')
   .then(res => res.json())
-  .then(data => console.log(data.data.jobs));
+  .then(data => console.log(data.jobs));
+
+// Search by location + classification
+fetch('<span class="base-url"></span>/api/search?location=jawa-tengah&classification=information-technology')
+  .then(res => res.json())
+  .then(data => console.log(data.jobs));
 
 // JobStreet recommendations
 fetch('<span class="base-url"></span>/api/jobstreet?page=1&limit=20')
@@ -472,8 +477,11 @@ fetch(`<span class="base-url"></span>/api/job?url=${jobUrl}`)
                     <pre><code># List jobs
 curl <span class="base-url"></span>/api/jobs
 
-# Search dengan filter
-curl "<span class="base-url"></span>/api/search?q=developer&category=IT&location=Jakarta"
+# Flexible search by location
+curl "<span class="base-url"></span>/api/search?location=banten"
+
+# Search with location + classification
+curl "<span class="base-url"></span>/api/search?location=jawa-tengah&classification=banking-financial-services"
 
 # JobStreet recommendations
 curl "<span class="base-url"></span>/api/jobstreet?page=1&limit=20"
@@ -491,10 +499,16 @@ curl "<span class="base-url"></span>/api/job?url=https%3A%2F%2Fid.jobstreet.com%
 response = requests.get('<span class="base-url"></span>/api/jobs')
 jobs = response.json()['data']['jobs']
 
-# Search dengan filter
-params = {'q': 'developer', 'category': 'IT', 'location': 'Jakarta'}
-response = requests.get('<span class="base-url"></span>/api/search', params=params)
-filtered_jobs = response.json()['data']['jobs']
+# Flexible search by location
+response = requests.get('<span class="base-url"></span>/api/search?location=banten')
+jobs = response.json()['jobs']
+
+# Search with location + classification
+response = requests.get('<span class="base-url"></span>/api/search', params={
+    'location': 'jawa-tengah',
+    'classification': 'information-technology'
+})
+jobs = response.json()['jobs']
 
 # JobStreet recommendations
 jobstreet = requests.get('<span class="base-url"></span>/api/jobstreet?page=1&limit=20')

@@ -60,65 +60,85 @@ function extractJobCategory(title, description, fullText = '') {
 }
 
 /**
+ * Normalize location/classification slug for URL
+ * Converts: "Jawa Tengah" → "jawa-tengah"
+ * Converts: "Banking & Financial Services" → "banking-financial-services"
+ * 
+ * @param {string} text - Text to normalize
+ * @returns {string} Normalized slug
+ */
+function normalizeSlug(text) {
+  if (!text) return '';
+  
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')           // spaces to dashes
+    .replace(/&/g, '')              // remove ampersands
+    .replace(/[^\w\-]/g, '')        // remove special chars
+    .replace(/--+/g, '-')           // multiple dashes to single
+    .replace(/^-+|-+$/g, '');       // trim dashes from start/end
+}
+
+/**
  * Build JobStreet search URL dynamically based on user parameters
- * LOCATION-FIRST SEARCH STRATEGY (JobStreet-style)
+ * FLEXIBLE SEARCH STRATEGY (following JobStreet URL patterns)
  * 
- * URL Construction Rules:
- * 1. Base: https://id.jobstreet.com/id/jobs
- * 2. Location (PRIMARY): /in-{location}
- * 3. Keyword: ?q=keyword
- * 4. Classification: ?classification=category
- * 5. Page: ?page=number
+ * URL Construction Patterns (MUST FOLLOW JobStreet):
  * 
- * Examples:
- * - location only: /jobs/in-Tegal
- * - location + category: /jobs/in-Tegal?classification=Akuntansi
- * - keyword + location: /jobs/in-Tegal?q=admin
+ * 1. Location only:
+ *    https://id.jobstreet.com/id/jobs/in-{location}
+ *    Example: /jobs/in-banten
+ *             /jobs/in-jawa-tengah
+ *             /jobs/in-jakarta
+ * 
+ * 2. Location + Classification:
+ *    https://id.jobstreet.com/id/jobs-in-{classification}/in-{location}
+ *    Example: /jobs-in-banking-financial-services/in-banten
+ *             /jobs-in-information-technology/in-jawa-tengah
+ * 
+ * 3. Pagination: ?page=number
  * 
  * @param {Object} params - Search parameters
- * @param {string} params.q - Keyword (job title or skill)
- * @param {string} params.location - Location (city or region) - PRIMARY
- * @param {string} params.category - Category/classification
+ * @param {string} params.location - Location (city/region) - REQUIRED
+ * @param {string} params.classification - Classification slug - OPTIONAL
  * @param {number} params.page - Page number for pagination
  * @returns {string} JobStreet search URL
  */
 function buildJobStreetSearchURL(params = {}) {
-  const { q, location, category, page = 1 } = params;
+  const { location, classification, page = 1 } = params;
   
-  // Base JobStreet URL
-  let url = 'https://id.jobstreet.com/id/jobs';
+  // Base URL
+  const baseUrl = 'https://id.jobstreet.com/id';
   
-  // LOCATION FIRST (Primary search context)
-  if (location && location.trim() && location !== 'Semua Lokasi') {
-    url += `/in-${encodeURIComponent(location.trim())}`;
-    console.log(`[URL Builder] Location-first search: ${location}`);
-  } else {
-    // Fallback: all Indonesia
-    url += '/in-Indonesia';
+  // Normalize inputs
+  const normalizedLocation = normalizeSlug(location);
+  const normalizedClassification = classification ? normalizeSlug(classification) : null;
+  
+  if (!normalizedLocation) {
+    console.log('[URL Builder] WARNING: No location provided, defaulting to Indonesia');
+    return `${baseUrl}/jobs/in-indonesia${page > 1 ? `?page=${page}` : ''}`;
   }
   
-  const queryParams = [];
+  let url;
   
-  // Add keyword search
-  if (q && q.trim()) {
-    queryParams.push(`q=${encodeURIComponent(q.trim())}`);
-  }
-  
-  // Add classification filter (as query param, not URL path)
-  if (category && category.trim() && category !== 'Semua') {
-    queryParams.push(`classification=${encodeURIComponent(category.trim())}`);
-    console.log(`[URL Builder] Classification filter: ${category}`);
+  // Pattern 1: Location only
+  if (!normalizedClassification) {
+    url = `${baseUrl}/jobs/in-${normalizedLocation}`;
+    console.log(`[URL Builder] Location search: ${normalizedLocation}`);
+  } 
+  // Pattern 2: Location + Classification
+  else {
+    url = `${baseUrl}/jobs-in-${normalizedClassification}/in-${normalizedLocation}`;
+    console.log(`[URL Builder] Location + Classification: ${normalizedLocation} + ${normalizedClassification}`);
   }
   
   // Add pagination
   if (page && page > 1) {
-    queryParams.push(`page=${page}`);
+    url += `?page=${page}`;
   }
   
-  // Build final URL with query parameters
-  if (queryParams.length > 0) {
-    url += '?' + queryParams.join('&');
-  }
+  console.log(`[URL Builder] Final URL: ${url}`);
   
   return url;
 }
