@@ -283,7 +283,7 @@
                 <h2 style="color: #667eea; margin-bottom: 10px;">📊 Statistics</h2>
                 <div class="stats-grid">
                     <div class="stat-item">
-                        <div class="stat-number">2</div>
+                        <div class="stat-number">4</div>
                         <div class="stat-label">Endpoints</div>
                     </div>
                     <div class="stat-item">
@@ -315,7 +315,43 @@
                     </div>
                 </div>
 
-                <!-- Endpoint 2: Job Detail -->
+                <!-- Endpoint 2: Search & Filter Jobs -->
+                <div class="endpoint-card" onclick="window.open(getBaseUrl() + '/api/search?q=developer&category=IT&location=Jakarta', '_blank')">
+                    <div class="endpoint-header">
+                        <span class="method">GET</span>
+                        <span class="endpoint-url">/api/search</span>
+                    </div>
+                    <div class="endpoint-desc">
+                        🆕 <strong>NEW!</strong> Cari dan filter lowongan berdasarkan keyword, kategori, dan lokasi
+                    </div>
+                    <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 5px; font-size: 0.85em;">
+                        <strong>Query Parameters:</strong><br>
+                        • <code style="color: #667eea;">q</code> - Keyword search (job title, company, description)<br>
+                        • <code style="color: #667eea;">category</code> - Filter by category (IT, Marketing, Design, dll)<br>
+                        • <code style="color: #667eea;">location</code> - Filter by location (Jakarta, Bandung, dll)<br>
+                        • <code style="color: #667eea;">limit</code> - Limit results (default: 30, max: 100)<br><br>
+                        <strong>Contoh:</strong><br>
+                        <code style="color: #667eea;">/api/search?q=developer&category=IT&location=Jakarta&limit=20</code>
+                    </div>
+                </div>
+
+                <!-- Endpoint 3: Get Available Filters -->
+                <div class="endpoint-card" onclick="window.open(getBaseUrl() + '/api/filters', '_blank')">
+                    <div class="endpoint-header">
+                        <span class="method">GET</span>
+                        <span class="endpoint-url">/api/filters</span>
+                    </div>
+                    <div class="endpoint-desc">
+                        🆕 <strong>NEW!</strong> Mendapatkan daftar kategori dan lokasi yang tersedia untuk filter
+                    </div>
+                    <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 5px; font-size: 0.85em;">
+                        <strong>Response includes:</strong><br>
+                        • List kategori dengan jumlah job (IT: 45, Marketing: 23, dll)<br>
+                        • List lokasi yang tersedia (Jakarta, Bandung, Surabaya, dll)
+                    </div>
+                </div>
+
+                <!-- Endpoint 4: Job Detail -->
                 <div class="endpoint-card">
                     <div class="endpoint-header">
                         <span class="method">GET</span>
@@ -342,6 +378,19 @@ fetch('<span class="base-url"></span>/api/jobs')
   .then(res => res.json())
   .then(data => console.log(data.data.jobs));
 
+// 🆕 Search dengan filter
+fetch('<span class="base-url"></span>/api/search?q=developer&category=IT&location=Jakarta')
+  .then(res => res.json())
+  .then(data => console.log(data.data.jobs));
+
+// 🆕 Get available filters
+fetch('<span class="base-url"></span>/api/filters')
+  .then(res => res.json())
+  .then(data => {
+    console.log('Categories:', data.data.categories);
+    console.log('Locations:', data.data.locations);
+  });
+
 // Detail 1 job
 const jobUrl = encodeURIComponent('https://id.jobstreet.com/id/job/12345678');
 fetch(`<span class="base-url"></span>/api/job?url=${jobUrl}`)
@@ -355,6 +404,12 @@ fetch(`<span class="base-url"></span>/api/job?url=${jobUrl}`)
                     <pre><code># List jobs
 curl <span class="base-url"></span>/api/jobs
 
+# 🆕 Search dengan filter
+curl "<span class="base-url"></span>/api/search?q=developer&category=IT&location=Jakarta"
+
+# 🆕 Get filters
+curl <span class="base-url"></span>/api/filters
+
 # Detail job
 curl "<span class="base-url"></span>/api/job?url=https%3A%2F%2Fid.jobstreet.com%2Fid%2Fjob%2F12345"</code></pre>
                 </div>
@@ -367,6 +422,16 @@ curl "<span class="base-url"></span>/api/job?url=https%3A%2F%2Fid.jobstreet.com%
 # List jobs
 response = requests.get('<span class="base-url"></span>/api/jobs')
 jobs = response.json()['data']['jobs']
+
+# 🆕 Search dengan filter
+params = {'q': 'developer', 'category': 'IT', 'location': 'Jakarta'}
+response = requests.get('<span class="base-url"></span>/api/search', params=params)
+filtered_jobs = response.json()['data']['jobs']
+
+# 🆕 Get available filters
+filters = requests.get('<span class="base-url"></span>/api/filters').json()['data']
+print('Categories:', [c['name'] for c in filters['categories']])
+print('Locations:', filters['locations'])
 
 # Detail job
 from urllib.parse import quote
