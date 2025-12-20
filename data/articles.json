@@ -1,6 +1,5 @@
 {
-  "success": true,
-  "data": [
+  "articles": [
     {
       "id": "1",
       "title": "Tips Membuat CV yang Menarik untuk Fresh Graduate",
@@ -141,11 +140,5 @@
         "avatar": "https://ui-avatars.com/api/?name=LokerID&background=6366f1&color=fff"
       }
     }
-  ],
-  "meta": {
-    "total": 10,
-    "page": 1,
-    "limit": 10,
-    "totalPages": 1
-  }
+  ]
 }
