@@ -354,17 +354,35 @@
                 </div>
 
                 <!-- Endpoint 3: Job Detail -->
-                <div class="endpoint-card">
+                <div class="endpoint-card" onclick="alert('Copy job URL from search results and pass it as url parameter')">
                     <div class="endpoint-header">
                         <span class="method">GET</span>
                         <span class="endpoint-url">/api/job?url=&lt;jobstreet_url&gt;</span>
                     </div>
                     <div class="endpoint-desc">
-                        Get full job detail dengan deskripsi lengkap
+                        📄 Get FULL job detail dengan deskripsi lengkap dari JobStreet
                     </div>
                     <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 5px; font-size: 0.85em;">
+                        <strong>Query Parameters:</strong><br>
+                        • <code style="color: #667eea;">url</code> - Full JobStreet job URL (REQUIRED, URL-encoded)<br><br>
+                        <strong>Response Fields:</strong><br>
+                        • <code style="color: #667eea;">job_title</code> - Job position title<br>
+                        • <code style="color: #667eea;">company</code> - Company name<br>
+                        • <code style="color: #667eea;">location</code> - Job location<br>
+                        • <code style="color: #667eea;">salary_range</code> - Salary info (if available)<br>
+                        • <code style="color: #667eea;">job_type</code> - Full-time, Part-time, Contract, etc.<br>
+                        • <code style="color: #667eea;">posted_date</code> - When the job was posted<br>
+                        • <code style="color: #667eea;">description</code> - Full job description (multi-paragraph)<br>
+                        • <code style="color: #667eea;">requirements</code> - List of job requirements<br>
+                        • <code style="color: #667eea;">source_url</code> - Original JobStreet URL<br><br>
+                        <strong>Features:</strong><br>
+                        • 15-minute cache for faster response<br>
+                        • Full description extraction (all paragraphs)<br>
+                        • Automatic requirements parsing<br>
+                        • Works with any JobStreet job URL<br><br>
                         <strong>Example:</strong><br>
-                        <code style="color: #667eea;">/api/job?url=https%3A%2F%2Fid.jobstreet.com%2Fid%2Fjob%2F...</code>
+                        <code style="color: #667eea;">/api/job?url=https%3A%2F%2Fid.jobstreet.com%2Fid%2Fjob%2F75934159</code><br><br>
+                        💡 <strong>How to use:</strong> Get job URL from <code style="color: #667eea;">detailUrl</code> field in search results, then URL-encode it
                     </div>
                 </div>
 
