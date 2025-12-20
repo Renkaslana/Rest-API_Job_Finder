@@ -90,18 +90,20 @@ module.exports = async (req, res) => {
     );
 
     /**
-     * STEP 1: Scrape jobs from JobStreet
+     * STEP 1: Scrape jobs from JobStreet (ONE PAGE ONLY)
      * URL will be built as:
-     * - Location only: /jobs/in-{location}
-     * - Location + Classification: /jobs-in-{classification}/in-{location}
+     * - Location only: /jobs/in-{location}?page={page}
+     * - Location + Classification: /jobs-in-{classification}/in-{location}?page={page}
      */
-    const scrapedJobs = await scrapeJobs({
+    const scrapedData = await scrapeJobs({
       location: normalizedLocation,
       classification: normalizedClassification,
       page: pageNum
     });
 
-    console.log(`[Search API] Scraped ${scrapedJobs.length} jobs from JobStreet`);
+    const { jobs: scrapedJobs, hasNextPage } = scrapedData;
+
+    console.log(`[Search API] Scraped ${scrapedJobs.length} jobs. Has next page: ${hasNextPage}`);
 
     /**
      * STEP 2: Transform jobs to API format
@@ -117,7 +119,7 @@ module.exports = async (req, res) => {
     }));
 
     /**
-     * STEP 3: Build response with required structure
+     * STEP 3: Build response with pagination info
      */
     const response = {
       query: {
@@ -126,9 +128,9 @@ module.exports = async (req, res) => {
         page: pageNum
       },
       meta: {
-        source: 'jobstreet',
-        scrapedAt: new Date().toISOString(),
-        totalJobs: jobs.length
+        limit: 20,
+        hasNextPage: hasNextPage,
+        scrapedAt: new Date().toISOString()
       },
       jobs: jobs
     };

@@ -140,22 +140,28 @@ GET /api/jobstreet?page=1&limit=20
 
 ### GET /api/search
 
-**Description**: Flexible search jobs by location and classification (following JobStreet URL patterns)
+**Description**: Flexible search jobs by location and classification with pagination
 
 **Query Parameters**:
 - `location` (string, **REQUIRED**): Location slug (e.g., "banten", "jawa-tengah", "jakarta")
 - `classification` (string, optional): Classification slug (e.g., "banking-financial-services", "information-technology")
 - `page` (number, optional): Page number (default: 1)
 
+**Pagination**:
+- **Limit**: 20 jobs per page (max 25)
+- **One page per request** (no loops, efficient scraping)
+- Response includes `hasNextPage` indicator for infinite scroll
+- Maps directly to JobStreet pagination
+
 **URL Patterns Generated**:
-1. Location only: `/jobs/in-{location}`
-2. Location + Classification: `/jobs-in-{classification}/in-{location}`
+1. Location only: `/jobs/in-{location}?page={page}`
+2. Location + Classification: `/jobs-in-{classification}/in-{location}?page={page}`
 
 **Examples**:
 ```
 GET /api/search?location=banten
-GET /api/search?location=jawa-tengah&classification=information-technology
-GET /api/search?location=jakarta&classification=banking-financial-services&page=2
+GET /api/search?location=jawa-tengah&classification=information-technology&page=2
+GET /api/search?location=jakarta&classification=banking-financial-services&page=3
 ```
 
 **Response**:
@@ -167,9 +173,9 @@ GET /api/search?location=jakarta&classification=banking-financial-services&page=
     "page": 1
   },
   "meta": {
-    "source": "jobstreet",
-    "scrapedAt": "2025-12-20T10:30:00.000Z",
-    "totalJobs": 25
+    "limit": 20,
+    "hasNextPage": true,
+    "scrapedAt": "2025-12-20T10:30:00.000Z"
   },
   "jobs": [
     {
@@ -187,9 +193,10 @@ GET /api/search?location=jakarta&classification=banking-financial-services&page=
 
 **Key Features**:
 - ✅ Works with ALL Indonesia regions (no limitations)
+- ✅ Pagination support (perfect for infinite scroll)
+- ✅ Efficient: scrapes only one page per request
+- ✅ hasNextPage logic for better UX
 - ✅ Follows JobStreet URL structure exactly
-- ✅ Classification uses slugs (not numeric IDs)
-- ✅ Simple and flexible API contract
 
 ---
 

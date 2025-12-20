@@ -332,16 +332,20 @@
                         <span class="endpoint-url">/api/search</span>
                     </div>
                     <div class="endpoint-desc">
-                        ✨ <strong>FLEXIBLE!</strong> Search jobs by location (required) & classification (optional)
+                        ✨ <strong>FLEXIBLE!</strong> Search jobs by location (required) & classification (optional) with pagination
                     </div>
                     <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 5px; font-size: 0.85em;">
                         <strong>Query Parameters:</strong><br>
                         • <code style="color: #667eea;">location</code> - Location slug (REQUIRED) - e.g., "banten", "jawa-tengah", "jakarta"<br>
                         • <code style="color: #667eea;">classification</code> - Classification slug (optional) - e.g., "banking-financial-services", "information-technology"<br>
                         • <code style="color: #667eea;">page</code> - Page number (default: 1)<br><br>
+                        <strong>Pagination:</strong><br>
+                        • Limit: 20 jobs per page<br>
+                        • Response includes <code style="color: #667eea;">hasNextPage</code> indicator<br>
+                        • Perfect for infinite scroll<br><br>
                         <strong>URL Patterns:</strong><br>
-                        • Location only: <code style="color: #667eea;">/jobs/in-{location}</code><br>
-                        • Location + Classification: <code style="color: #667eea;">/jobs-in-{classification}/in-{location}</code><br><br>
+                        • Location only: <code style="color: #667eea;">/jobs/in-{location}?page={page}</code><br>
+                        • Location + Classification: <code style="color: #667eea;">/jobs-in-{classification}/in-{location}?page={page}</code><br><br>
                         <strong>Examples:</strong><br>
                         <code style="color: #667eea;">/api/search?location=banten</code><br>
                         <code style="color: #667eea;">/api/search?location=jawa-tengah&classification=information-technology</code><br>

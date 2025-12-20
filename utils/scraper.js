@@ -145,29 +145,29 @@ function buildJobStreetSearchURL(params = {}) {
 
 /**
  * Scrape job listings based on search parameters
- * IMPLEMENTS SEARCH-BASED SCRAPING STRATEGY
+ * IMPLEMENTS PAGINATION STRATEGY
  * 
  * How it works:
- * 1. User selects filters (keyword, location, etc)
- * 2. Build JobStreet search URL with those filters
- * 3. Scrape ONLY the search result page
- * 4. Return structured data
+ * 1. Build JobStreet URL with page parameter
+ * 2. Scrape ONLY ONE page (no loops)
+ * 3. Return jobs with pagination info
  * 
- * Benefits:
- * - Only load relevant data
- * - Leverage JobStreet's search engine
- * - Lightweight and efficient
- * - Respects rate limiting
+ * Pagination Rules:
+ * - Limit: 20-25 jobs per page (matches JobStreet)
+ * - One page per request (efficient)
+ * - hasNextPage logic based on result count
  * 
  * @param {Object} searchParams - Search parameters from user
- * @returns {Promise<Array>} Array of job objects
+ * @returns {Promise<Object>} Object with jobs array and pagination info
  */
 async function scrapeJobs(searchParams = {}) {
+  const LIMIT = 20; // Jobs per page (matching JobStreet pagination)
+  
   try {
     // Build dynamic search URL based on user parameters
     const TARGET_URL = buildJobStreetSearchURL(searchParams);
     
-    console.log(`[Scraper] Search-based scraping from: ${TARGET_URL}`);
+    console.log(`[Scraper] Scraping page ${searchParams.page || 1} from: ${TARGET_URL}`);
     console.log(`[Scraper] Parameters:`, searchParams);
     
     /**
@@ -452,10 +452,15 @@ async function scrapeJobs(searchParams = {}) {
     console.log(`[Scraper] Successfully scraped ${uniqueJobs.length} unique jobs (from ${jobs.length} total)`);
 
     /**
-     * Limit hasil untuk performance
-     * Ambil maksimal 30 jobs terbaru
+     * PAGINATION LOGIC
+     * - Limit to 20 jobs per page (max 25)
+     * - If we got LIMIT jobs, assume there's a next page
+     * - If less than LIMIT, this is the last page
      */
-    const limitedJobs = uniqueJobs.slice(0, 30);
+    const limitedJobs = uniqueJobs.slice(0, LIMIT);
+    const hasNextPage = uniqueJobs.length >= LIMIT;
+
+    console.log(`[Scraper] Returning ${limitedJobs.length} jobs. Has next page: ${hasNextPage}`);
 
     /**
      * Fallback: Jika scraping gagal (struktur HTML berubah)
@@ -463,10 +468,16 @@ async function scrapeJobs(searchParams = {}) {
      */
     if (limitedJobs.length === 0) {
       console.warn('[Scraper] No jobs found. Returning sample data.');
-      return getSampleJobs();
+      return {
+        jobs: getSampleJobs(),
+        hasNextPage: false
+      };
     }
 
-    return limitedJobs;
+    return {
+      jobs: limitedJobs,
+      hasNextPage: hasNextPage
+    };
 
   } catch (error) {
     console.error('[Scraper] Error:', error.message);
@@ -475,7 +486,10 @@ async function scrapeJobs(searchParams = {}) {
      * Fallback ke sample data jika scraping gagal
      * Ini memastikan API tetap berfungsi meskipun target website down
      */
-    return getSampleJobs();
+    return {
+      jobs: getSampleJobs(),
+      hasNextPage: false
+    };
   }
 }
 
