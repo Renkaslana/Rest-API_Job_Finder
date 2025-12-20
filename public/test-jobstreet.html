@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobStreet API Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .controls input, .controls button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+        
+        .controls input {
+            flex: 1;
+            min-width: 100px;
+        }
+        
+        .controls button {
+            background: #667eea;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .controls button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .controls button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .meta-info {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        .meta-item {
+            text-align: center;
+        }
+        
+        .meta-label {
+            color: #666;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+        
+        .meta-value {
+            color: #333;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .jobs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .job-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .job-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+        
+        .job-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        
+        .job-company {
+            color: #667eea;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .job-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .job-badge {
+            background: #f0f0f0;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .job-badge.salary {
+            background: #e6f7e6;
+            color: #2d7a2d;
+        }
+        
+        .job-posted {
+            color: #999;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #fcc;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .pagination button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .pagination button:hover:not(:disabled) {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .pagination .current {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 JobStreet API Test</h1>
+            <p class="subtitle">Testing endpoint: /api/jobstreet</p>
+        </div>
+        
+        <div class="controls">
+            <input type="number" id="pageInput" min="1" value="1" placeholder="Page">
+            <input type="number" id="limitInput" min="1" max="50" value="20" placeholder="Limit (max 50)">
+            <button onclick="loadJobs()">Load Jobs</button>
+            <button onclick="loadJobs(true)">Force Refresh</button>
+        </div>
+        
+        <div id="metaInfo"></div>
+        <div id="content"></div>
+        <div id="pagination"></div>
+    </div>
+
+    <script>
+        let currentPage = 1;
+        let currentLimit = 20;
+        let metaData = null;
+
+        async function loadJobs(forceRefresh = false) {
+            const page = parseInt(document.getElementById('pageInput').value) || 1;
+            const limit = parseInt(document.getElementById('limitInput').value) || 20;
+            
+            currentPage = page;
+            currentLimit = limit;
+
+            const content = document.getElementById('content');
+            const metaInfo = document.getElementById('metaInfo');
+            const pagination = document.getElementById('pagination');
+
+            // Show loading
+            content.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading jobs from JobStreet...</p>
+                </div>
+            `;
+            metaInfo.innerHTML = '';
+            pagination.innerHTML = '';
+
+            try {
+                // Change this URL based on your environment
+                // For local testing: http://localhost:3000/api/jobstreet
+                // For production: https://your-api.vercel.app/api/jobstreet
+                const apiUrl = `/api/jobstreet?page=${page}&limit=${limit}`;
+                
+                const timestamp = forceRefresh ? `&_t=${Date.now()}` : '';
+                const response = await fetch(apiUrl + timestamp);
+                const data = await response.json();
+
+                if (data.success) {
+                    metaData = data.meta;
+                    displayMetaInfo(data);
+                    displayJobs(data.data);
+                    displayPagination(data.meta);
+                } else {
+                    content.innerHTML = `
+                        <div class="error">
+                            <strong>Error:</strong> ${data.error || 'Failed to load jobs'}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                content.innerHTML = `
+                    <div class="error">
+                        <strong>Error:</strong> ${error.message}
+                        <br><br>
+                        <small>Make sure the API server is running.</small>
+                    </div>
+                `;
+            }
+        }
+
+        function displayMetaInfo(data) {
+            const metaInfo = document.getElementById('metaInfo');
+            const cached = data.cached ? '✅ Cached' : '🔄 Fresh';
+            
+            metaInfo.innerHTML = `
+                <div class="meta-item">
+                    <div class="meta-label">Total Jobs</div>
+                    <div class="meta-value">${data.meta.total.toLocaleString()}</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Current Page</div>
+                    <div class="meta-value">${data.meta.page}</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Per Page</div>
+                    <div class="meta-value">${data.meta.per_page}</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Total Pages</div>
+                    <div class="meta-value">${data.meta.total_pages}</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Status</div>
+                    <div class="meta-value" style="font-size: 14px;">${cached}</div>
+                </div>
+            `;
+        }
+
+        function displayJobs(jobs) {
+            const content = document.getElementById('content');
+            
+            if (jobs.length === 0) {
+                content.innerHTML = '<div class="loading"><p>No jobs found</p></div>';
+                return;
+            }
+
+            const jobsHtml = jobs.map(job => `
+                <div class="job-card" onclick="window.open('${job.source_url}', '_blank')">
+                    <div class="job-title">${job.job_title}</div>
+                    <div class="job-company">📍 ${job.company}</div>
+                    <div class="job-info">
+                        <span class="job-badge">📌 ${job.location}</span>
+                        <span class="job-badge">💼 ${job.job_type}</span>
+                        ${job.salary ? `<span class="job-badge salary">💰 ${job.salary}</span>` : ''}
+                    </div>
+                    <div class="job-posted">⏰ ${job.posted_date}</div>
+                </div>
+            `).join('');
+
+            content.innerHTML = `<div class="jobs-grid">${jobsHtml}</div>`;
+        }
+
+        function displayPagination(meta) {
+            const pagination = document.getElementById('pagination');
+            
+            const prevDisabled = meta.page <= 1;
+            const nextDisabled = !meta.has_next_page;
+
+            pagination.innerHTML = `
+                <button onclick="goToPage(${meta.page - 1})" ${prevDisabled ? 'disabled' : ''}>
+                    ← Previous
+                </button>
+                <button class="current">
+                    Page ${meta.page} of ${meta.total_pages}
+                </button>
+                <button onclick="goToPage(${meta.page + 1})" ${nextDisabled ? 'disabled' : ''}>
+                    Next →
+                </button>
+            `;
+        }
+
+        function goToPage(page) {
+            document.getElementById('pageInput').value = page;
+            loadJobs();
+        }
+
+        // Auto-load on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadJobs();
+        });
+    </script>
+</body>
+</html>

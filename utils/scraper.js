@@ -68,25 +68,22 @@ function extractJobCategory(title, description, fullText = '') {
  * 2. Location (PRIMARY): /in-{location}
  * 3. Keyword: ?q=keyword
  * 4. Classification: ?classification=category
- * 5. Tags: ?tags=new (for latest jobs)
- * 6. Page: ?page=number
+ * 5. Page: ?page=number
  * 
  * Examples:
  * - location only: /jobs/in-Tegal
  * - location + category: /jobs/in-Tegal?classification=Akuntansi
  * - keyword + location: /jobs/in-Tegal?q=admin
- * - latest jobs: /jobs/in-Indonesia?tags=new
  * 
  * @param {Object} params - Search parameters
  * @param {string} params.q - Keyword (job title or skill)
  * @param {string} params.location - Location (city or region) - PRIMARY
  * @param {string} params.category - Category/classification
- * @param {string} params.tags - Tags filter (e.g., 'new' for latest jobs)
  * @param {number} params.page - Page number for pagination
  * @returns {string} JobStreet search URL
  */
 function buildJobStreetSearchURL(params = {}) {
-  const { q, location, category, tags, page = 1 } = params;
+  const { q, location, category, page = 1 } = params;
   
   // Base JobStreet URL
   let url = 'https://id.jobstreet.com/id/jobs';
@@ -101,12 +98,6 @@ function buildJobStreetSearchURL(params = {}) {
   }
   
   const queryParams = [];
-  
-  // Add tags filter (for latest jobs)
-  if (tags && tags.trim()) {
-    queryParams.push(`tags=${encodeURIComponent(tags.trim())}`);
-    console.log(`[URL Builder] Tags filter: ${tags}`);
-  }
   
   // Add keyword search
   if (q && q.trim()) {
@@ -234,9 +225,6 @@ async function scrapeJobs(searchParams = {}) {
         
         const parentText = $parent.text();
         
-        // Get ALL text including deeper nested elements for better matching
-        const fullText = $parent.parent().text() + ' ' + parentText;
-        
         // IMPROVED: Extract company name dengan lebih akurat
         let company = 'Perusahaan Rahasia';
         
@@ -295,37 +283,22 @@ async function scrapeJobs(searchParams = {}) {
           }
         }
         
-        // IMPROVED: Extract posted date (kapan lowongan di-post)
-        // Priority: ambil yang format "X hari/minggu/bulan yang lalu"
-        // Use fullText for better matching
+        // IMPROVED: Extract posted date dengan format lebih akurat
         let postedDate = 'Baru saja';
-        const actualDatePatterns = [
+        const datePatterns = [
           /(\d+\+?\s*hari\s+(?:yang\s+)?lalu)/i,
           /(\d+\+?\s*minggu\s+(?:yang\s+)?lalu)/i,
           /(\d+\+?\s*bulan\s+(?:yang\s+)?lalu)/i,
+          /(Dibutuhkan\s+segera)/i,
+          /(Akan\s+segera\s+berakhir)/i,
           /(Hari\s+ini)/i,
           /(Kemarin)/i
         ];
         
-        for (const pattern of actualDatePatterns) {
-          const match = fullText.match(pattern);
+        for (const pattern of datePatterns) {
+          const match = parentText.match(pattern);
           if (match && match[1]) {
             postedDate = match[1].trim();
-            break;
-          }
-        }
-        
-        // IMPROVED: Extract status badge (urgency indicator)
-        let status = null;
-        const statusPatterns = [
-          /(Dibutuhkan\s+segera)/i,
-          /(Akan\s+segera\s+berakhir)/i
-        ];
-        
-        for (const pattern of statusPatterns) {
-          const match = fullText.match(pattern);
-          if (match && match[1]) {
-            status = match[1].trim();
             break;
           }
         }
@@ -433,11 +406,6 @@ async function scrapeJobs(searchParams = {}) {
           // Tambahkan salary jika ada
           if (salary) {
             jobData.salary_range = salary;
-          }
-          
-          // Tambahkan status badge jika ada (Akan segera berakhir, Dibutuhkan segera)
-          if (status) {
-            jobData.status = status;
           }
           
           // Tambahkan benefits jika ada
@@ -564,121 +532,6 @@ function extractClassifications(jobs) {
   return classifications;
 }
 
-/**
- * Scrape jobs directly from a URL
- * Simpler version that doesn't use buildJobStreetSearchURL
- * Used for static URLs like /jobs?tags=new or /jobs
- * 
- * @param {string} url - Direct URL to scrape
- * @returns {Promise<Array>} Array of job objects
- */
-async function scrapeJobsFromURL(url) {
-  try {
-    console.log(`[Scraper] Direct scraping from: ${url}`);
-    
-    const response = await fetch(url, {
-      headers: {
-        'User-Agent': 'JobFinderBot/2.0 (Educational Purpose)',
-        'Accept': 'text/html,application/xhtml+xml',
-        'Accept-Language': 'id-ID,id;q=0.9,en;q=0.8'
-      },
-      timeout: 10000 // 10 second timeout
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-
-    const html = await response.text();
-    const $ = cheerio.load(html);
-    
-    const jobs = [];
-
-    // Parse job listings (same logic as scrapeJobs)
-    $('h1, h3').each((index, element) => {
-      const $element = $(element);
-      const $link = $element.find('a[href*="/id/job/"]').first();
-      
-      if ($link.length === 0) {
-        return;
-      }
-
-      const title = $link.text().trim();
-      const jobUrl = $link.attr('href');
-      
-      if (!title || !jobUrl) {
-        return;
-      }
-
-      const fullUrl = jobUrl.startsWith('http') 
-        ? jobUrl 
-        : `https://id.jobstreet.com${jobUrl}`;
-
-      // Extract additional info from nearby elements
-      const $parent = $element.closest('article, div[data-automation="job-card"], div[class*="job"]');
-      
-      let company = 'Perusahaan Rahasia';
-      let location = 'Indonesia';
-      let salary = null;
-      let postedAgo = 'Baru saja';
-      let description = 'Klik link untuk melihat detail lengkap pekerjaan ini';
-
-      // Try to find company name
-      const companyText = $parent.find('a[data-automation*="company"], span[data-automation*="company"]').first().text().trim();
-      if (companyText) {
-        company = companyText;
-      }
-
-      // Try to find location
-      const locationText = $parent.find('span[data-automation*="location"], a[data-automation*="location"]').first().text().trim();
-      if (locationText) {
-        location = locationText;
-      }
-
-      // Try to find salary
-      const salaryText = $parent.find('span[data-automation*="salary"]').first().text().trim();
-      if (salaryText && salaryText.toLowerCase().includes('rp')) {
-        salary = salaryText;
-      }
-
-      // Try to find posted date
-      const postedText = $parent.find('time, span[data-automation*="posted"]').first().text().trim();
-      if (postedText) {
-        postedAgo = postedText;
-      }
-
-      // Try to find job description
-      const descriptionText = $parent.find('span[data-automation*="description"], div[class*="description"]').first().text().trim();
-      if (descriptionText && descriptionText.length > 10) {
-        description = descriptionText.substring(0, 200);
-      }
-
-      // Extract category from title and description
-      const category = extractJobCategory(title, description);
-
-      jobs.push({
-        title,
-        company,
-        location,
-        category,
-        salary,
-        postedAgo,
-        detailUrl: fullUrl,
-        description
-      });
-    });
-
-    console.log(`[Scraper] Found ${jobs.length} jobs from ${url}`);
-    
-    return jobs;
-
-  } catch (error) {
-    console.error('[Scraper] Error:', error.message);
-    throw error;
-  }
-}
-
 module.exports = scrapeJobs;
-module.exports.scrapeJobsFromURL = scrapeJobsFromURL;
 module.exports.extractClassifications = extractClassifications;
 module.exports.buildJobStreetSearchURL = buildJobStreetSearchURL;

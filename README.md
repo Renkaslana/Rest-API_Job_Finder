@@ -11,7 +11,13 @@ REST API untuk job listings dan career articles dengan **on-request scraping** d
 - ✅ **Pagination**: Efficient data loading
 - ✅ **15 min Cache**: Fast response dengan CDN caching
 
-### 📰 Career Articles (NEW!)
+### 🌟 JobStreet Recommendations (NEW!)
+- ✅ **Rekomendasi Jobs**: Scraping dari halaman rekomendasi JobStreet
+- ✅ **Fresh Data**: Data lowongan terbaru dan relevan
+- ✅ **Pagination Support**: Load data per halaman
+- ✅ **5 min Cache**: Quick response untuk data recommendations
+
+### 📰 Career Articles
 - ✅ **Original Content**: Career tips & advice articles
 - ✅ **Block-based Structure**: Paragraphs, headings, lists, images, highlights
 - ✅ **Categories**: Career development, salary advice, workplace wellbeing
@@ -85,6 +91,48 @@ GET /api/jobs?limit=20&sort=salary&salary=true
       }
     }
   }
+}
+```
+
+---
+
+### GET /api/jobstreet
+
+**Description**: Get job recommendations dari JobStreet Indonesia
+
+**Query Parameters**:
+- `page` (number): Page number (default: 1)
+- `limit` (number): Results per page (default: 20, max: 50)
+
+**Example**:
+```
+GET /api/jobstreet?page=1&limit=20
+```
+
+**Response**:
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "89048914",
+      "job_title": "Store Leader (Jabodetabek)",
+      "company": "Prima Audio Indonesia",
+      "location": "Jakarta Raya",
+      "job_type": "Full time",
+      "posted_date": "10 hari yang lalu",
+      "source_name": "JobStreet Indonesia",
+      "source_url": "https://id.jobstreet.com/id/job/89048914"
+    }
+  ],
+  "meta": {
+    "total": 2292,
+    "page": 1,
+    "per_page": 20,
+    "total_pages": 115,
+    "has_next_page": true
+  },
+  "timestamp": "2025-12-20T10:30:00.000Z"
 }
 ```
 
