@@ -6,10 +6,10 @@ REST API untuk job listings dan career articles dengan **on-request scraping** d
 
 ### 🔍 Job Search
 - ✅ **Real-time Scraping**: Fresh job data dari JobStreet Indonesia
-- ✅ **Advanced Filters**: Keyword, category, location, salary, job type
-- ✅ **Smart Sorting**: Latest, salary, relevance
-- ✅ **Pagination**: Efficient data loading
+- ✅ **Location & Category Filters**: Via /api/search endpoint
+- ✅ **Pagination**: Efficient data loading with hasNextPage indicator
 - ✅ **15 min Cache**: Fast response dengan CDN caching
+- ✅ **Parameter Validation**: Clear error messages for invalid params
 
 ### 🌟 JobStreet Recommendations (NEW!)
 - ✅ **Rekomendasi Jobs**: Scraping dari halaman rekomendasi JobStreet
@@ -65,33 +65,53 @@ vercel --prod
 
 ### GET /api/jobs
 
-**Description**: Get recommended jobs for home screen
+**Description**: Get recommended jobs for home screen (simple, no filters)
 
 **Query Parameters**:
-- `limit` (number): Results to return (default: 30, max: 100)
-- `sort` (string): Sort order - `latest` (default) or `salary`
-- `salary` (boolean): Filter only jobs with salary info (`true`/`false`)
+- `limit` (number, optional): Results to return (default: 30, max: 100)
+- `page` (number, optional): Page number (default: 1)
+
+**Not Supported**:
+- ❌ `sort`, `salary`, `category`, `location`, `q` parameters
+- Use `/api/search` for location/category filters
+- Use `/api/jobstreet` for curated recommendations
+
+**Why no sort/salary filters?**
+JobStreet does not support sorting by salary or filtering by salary via URL parameters. These features would require scraping all pages and server-side processing, which violates efficient scraping practices.
 
 **Example**:
 ```
-GET /api/jobs?limit=20&sort=salary&salary=true
+GET /api/jobs?limit=20&page=1
 ```
 
 **Response**:
 ```json
 {
   "status": "success",
+  "statusCode": 200,
+  "message": "Successfully fetched 20 jobs",
   "data": {
     "jobs": [...],
     "metadata": {
       "total": 20,
-      "filters_applied": {
-        "limit": 20,
-        "sort": "salary",
-        "only_with_salary": true
-      }
+      "page": 1,
+      "limit": 20,
+      "hasNextPage": true,
+      "scraping_method": "on-request",
+      "cache_duration": "15 minutes"
     }
   }
+}
+```
+
+**Error Response (Invalid Parameters)**:
+```json
+{
+  "status": "error",
+  "statusCode": 400,
+  "message": "Invalid parameter(s): sort, salary",
+  "validParameters": ["limit", "page"],
+  "hint": "For search/filter features, use /api/search or /api/jobstreet endpoints"
 }
 ```
 

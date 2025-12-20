@@ -338,10 +338,13 @@
  * 
  * Query Parameters:
  * - limit: Number of jobs to return (default: 30, max: 100)
- * - sort: Sort order (latest, salary)
- * - salary: Filter only jobs with salary info (true/false)
+ * - page: Page number for pagination (default: 1)
  * 
- * Used for: Home screen recommended jobs
+ * Note: This endpoint does NOT support:
+ * - sort, salary, category, location, q parameters
+ * - For search/filter features, use /api/search or /api/jobstreet
+ * 
+ * Purpose: Get recommended jobs for home screen (simple, no complex filters)
  * 
  * Cache Strategy:
  * - s-maxage=900 (15 minutes CDN cache)
@@ -349,6 +352,9 @@
  */
 
 const scrapeJobs = require('../utils/scraper');
+
+// Valid parameters for this endpoint
+const VALID_PARAMS = ['limit', 'page'];
 
 module.exports = async (req, res) => {
   // Set CORS headers
@@ -370,15 +376,37 @@ module.exports = async (req, res) => {
   }
 
   try {
+    // Validate query parameters
+    const queryKeys = Object.keys(req.query);
+    const invalidParams = queryKeys.filter(key => !VALID_PARAMS.includes(key));
+    
+    if (invalidParams.length > 0) {
+      return res.status(400).json({
+        status: 'error',
+        statusCode: 400,
+        message: `Invalid parameter(s): ${invalidParams.join(', ')}`,
+        validParameters: VALID_PARAMS,
+        hint: 'For search/filter features, use /api/search or /api/jobstreet endpoints'
+      });
+    }
+
     // Parse query parameters
     const {
       limit = '30',
-      sort = 'latest',
-      salary = 'false'
+      page = '1'
     } = req.query;
 
-    const limitNum = Math.min(parseInt(limit) || 30, 100);
-    const onlyWithSalary = salary === 'true';
+    const limitNum = Math.min(Math.max(parseInt(limit) || 30, 1), 100);
+    const pageNum = Math.max(parseInt(page) || 1, 1);
+
+    // Validate numeric parameters
+    if (isNaN(limitNum) || isNaN(pageNum)) {
+      return res.status(400).json({
+        status: 'error',
+        statusCode: 400,
+        message: 'Parameters limit and page must be valid numbers'
+      });
+    }
 
     // Cache headers (15 minutes as per best practice)
     res.setHeader(
@@ -391,47 +419,27 @@ module.exports = async (req, res) => {
      * For /api/jobs, we use default search (all jobs in Indonesia)
      * No specific filters - just get latest jobs
      */
-    let jobs = await scrapeJobs({});
-
-    // Filter: only jobs with salary (if requested)
-    if (onlyWithSalary) {
-      jobs = jobs.filter(job => job.salary_range && job.salary_range.length > 0);
-    }
-
-    // Sort jobs
-    if (sort === 'salary') {
-      // Sort by salary (jobs with salary first, then by title)
-      jobs.sort((a, b) => {
-        const aHasSalary = a.salary_range ? 1 : 0;
-        const bHasSalary = b.salary_range ? 1 : 0;
-        return bHasSalary - aHasSalary;
-      });
-    } else {
-      // Default: latest (no change needed, scraper returns latest first)
-    }
+    const result = await scrapeJobs({ page: pageNum });
+    
+    // Handle new scraper response format {jobs, hasNextPage}
+    const jobs = result.jobs || result;
+    const hasNextPage = result.hasNextPage !== undefined ? result.hasNextPage : false;
 
     // Apply limit
-    const limitedJobs = jobs.slice(0, limitNum);
+    const limitedJobs = Array.isArray(jobs) ? jobs.slice(0, limitNum) : [];
 
     // Success response
     return res.status(200).json({
       status: 'success',
-      creator: 'Job Finder API',
       statusCode: 200,
-      statusMessage: 'OK',
       message: `Successfully fetched ${limitedJobs.length} jobs`,
-      ok: true,
-      updated_at: new Date().toISOString(),
       data: {
         jobs: limitedJobs,
         metadata: {
           total: limitedJobs.length,
-          total_available: jobs.length,
-          filters_applied: {
-            limit: limitNum,
-            sort: sort,
-            only_with_salary: onlyWithSalary
-          },
+          page: pageNum,
+          limit: limitNum,
+          hasNextPage: hasNextPage,
           scraping_method: 'on-request',
           cache_duration: '15 minutes'
         }
@@ -439,16 +447,14 @@ module.exports = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Scraping error:', error);
+    console.error('[Jobs API] Error:', error);
     
     // Error response
     return res.status(500).json({
       status: 'error',
       statusCode: 500,
-      statusMessage: 'Internal Server Error',
-      message: 'Failed to scrape job listings',
-      ok: false,
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal error'
+      message: 'Failed to fetch job listings',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
     });
   }
 };

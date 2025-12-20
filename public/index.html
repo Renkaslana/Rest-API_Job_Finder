@@ -307,21 +307,24 @@
                 <h3 style="margin: 30px 0 15px 0; color: #667eea;">🔍 Job Search & Listing</h3>
                 
                 <!-- Endpoint 1: List Jobs (Updated) -->
-                <div class="endpoint-card" onclick="window.open(getBaseUrl() + '/api/jobs?limit=20&sort=salary&salary=true', '_blank')">
+                <div class="endpoint-card" onclick="window.open(getBaseUrl() + '/api/jobs?limit=20&page=1', '_blank')">
                     <div class="endpoint-header">
                         <span class="method">GET</span>
                         <span class="endpoint-url">/api/jobs</span>
                     </div>
                     <div class="endpoint-desc">
-                        ✨ <strong>ENHANCED!</strong> Recommended jobs untuk Home screen dengan filter options
+                        📋 Recommended jobs untuk Home screen (simple, no filters)
                     </div>
                     <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 5px; font-size: 0.85em;">
                         <strong>Query Parameters:</strong><br>
                         • <code style="color: #667eea;">limit</code> - Number of jobs (default: 30, max: 100)<br>
-                        • <code style="color: #667eea;">sort</code> - Sort order: latest (default), salary<br>
-                        • <code style="color: #667eea;">salary</code> - Filter only jobs with salary (true/false)<br><br>
+                        • <code style="color: #667eea;">page</code> - Page number (default: 1)<br><br>
+                        <strong>⚠️ Not Supported:</strong><br>
+                        • <code style="color: #dc3545;">sort</code>, <code style="color: #dc3545;">salary</code>, <code style="color: #dc3545;">category</code>, <code style="color: #dc3545;">location</code>, <code style="color: #dc3545;">q</code><br>
+                        • Use <code style="color: #667eea;">/api/search</code> for advanced filters<br>
+                        • Use <code style="color: #667eea;">/api/jobstreet</code> for recommendations<br><br>
                         <strong>Example:</strong><br>
-                        <code style="color: #667eea;">/api/jobs?limit=20&sort=salary&salary=true</code>
+                        <code style="color: #667eea;">/api/jobs?limit=20&page=1</code>
                     </div>
                 </div>
 
