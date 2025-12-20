@@ -140,48 +140,56 @@ GET /api/jobstreet?page=1&limit=20
 
 ### GET /api/search
 
-**Description**: Advanced job search with multiple filters
+**Description**: Flexible search jobs by location and classification (following JobStreet URL patterns)
 
 **Query Parameters**:
-- `q` (string): Search keyword (title, company, description)
-- `category` (string): Job category (IT, Marketing, Design, etc)
-- `location` (string): Location filter (Jakarta, Bandung, etc)
-- `salaryMin` (number): Minimum salary filter
-- `jobType` (string): Job type - `full-time`, `part-time`, `contract`, `internship`, `freelance`
-- `sort` (string): Sort order - `latest` (default), `salary`, `relevance`
-- `page` (number): Page number (default: 1)
-- `limit` (number): Results per page (default: 30, max: 100)
+- `location` (string, **REQUIRED**): Location slug (e.g., "banten", "jawa-tengah", "jakarta")
+- `classification` (string, optional): Classification slug (e.g., "banking-financial-services", "information-technology")
+- `page` (number, optional): Page number (default: 1)
 
-**Example**:
+**URL Patterns Generated**:
+1. Location only: `/jobs/in-{location}`
+2. Location + Classification: `/jobs-in-{classification}/in-{location}`
+
+**Examples**:
 ```
-GET /api/search?q=developer&category=IT&location=Jakarta&salaryMin=5000000&sort=salary&page=1
+GET /api/search?location=banten
+GET /api/search?location=jawa-tengah&classification=information-technology
+GET /api/search?location=jakarta&classification=banking-financial-services&page=2
 ```
 
 **Response**:
 ```json
 {
-  "status": "success",
-  "message": "Found 45 jobs matching your criteria",
-  "data": {
-    "jobs": [...],
-    "metadata": {
-      "total_results": 45,
-      "page": 1,
-      "limit": 30,
-      "total_pages": 2,
-      "has_next": true,
-      "has_previous": false,
-      "sort_by": "salary",
-      "filters_applied": {
-        "keyword": "developer",
-        "category": "IT",
-        "location": "Jakarta",
-        "salaryMin": "5000000"
-      }
+  "query": {
+    "location": "banten",
+    "classification": "banking-financial-services",
+    "page": 1
+  },
+  "meta": {
+    "source": "jobstreet",
+    "scrapedAt": "2025-12-20T10:30:00.000Z",
+    "totalJobs": 25
+  },
+  "jobs": [
+    {
+      "title": "Bank Teller",
+      "company": "Bank Mandiri",
+      "location": "Tangerang, Banten",
+      "classification": "Banking & Financial Services",
+      "salary": "Rp 5.000.000 - Rp 7.000.000",
+      "postedAgo": "2 hari yang lalu",
+      "detailUrl": "https://id.jobstreet.com/id/job/..."
     }
-  }
+  ]
 }
 ```
+
+**Key Features**:
+- ✅ Works with ALL Indonesia regions (no limitations)
+- ✅ Follows JobStreet URL structure exactly
+- ✅ Classification uses slugs (not numeric IDs)
+- ✅ Simple and flexible API contract
 
 ---
 
