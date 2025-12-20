@@ -219,6 +219,40 @@ async function scrapeJobs() {
           }
         }
         
+        // NEW: Extract benefits/highlights (Gaji Kompetitif, Insentif Menarik, dll)
+        const benefits = [];
+        const benefitPatterns = [
+          /Gaji\s+[Kk]ompetitif/i,
+          /Insentif\s+[Mm]enarik/i,
+          /Kesempatan\s+[Jj]enjang\s+[Kk]arir/i,
+          /BPJS\s+(?:Kesehatan|Ketenagakerjaan)/i,
+          /Tunjangan\s+(?:[Kk]esehatan|[Mm]akan|[Tt]ransport)/i,
+          /Bonus\s+(?:[Tt]ahunan|[Pp]erformance)/i,
+          /Work[- ]?Life\s+Balance/i,
+          /Training\s+(?:&\s+)?Development/i,
+          /Asuransi/i,
+          /THR/i,
+          /Cuti\s+(?:[Tt]ahunan)?/i,
+          /Lingkungan\s+[Kk]erja\s+[Nn]yaman/i,
+          /Full\s*[- ]?[Tt]ime/i,
+          /Kontrak/i,
+          /Paruh\s+[Ww]aktu/i,
+          /Remote\s+[Ww]ork/i,
+          /Hybrid/i,
+          /WFH/i
+        ];
+        
+        for (const pattern of benefitPatterns) {
+          const match = parentText.match(pattern);
+          if (match && match[0]) {
+            const benefit = match[0].trim();
+            // Avoid duplicates
+            if (!benefits.includes(benefit)) {
+              benefits.push(benefit);
+            }
+          }
+        }
+        
         // Extract description preview (snippet, bukan full description)
         let description = 'Klik link untuk melihat detail lengkap pekerjaan ini';
         
@@ -262,6 +296,11 @@ async function scrapeJobs() {
           // Tambahkan salary jika ada
           if (salary) {
             jobData.salary_range = salary;
+          }
+          
+          // Tambahkan benefits jika ada
+          if (benefits.length > 0) {
+            jobData.benefits = benefits;
           }
           
           jobs.push(jobData);
