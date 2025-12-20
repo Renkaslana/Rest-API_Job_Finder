@@ -68,22 +68,25 @@ function extractJobCategory(title, description, fullText = '') {
  * 2. Location (PRIMARY): /in-{location}
  * 3. Keyword: ?q=keyword
  * 4. Classification: ?classification=category
- * 5. Page: ?page=number
+ * 5. Tags: ?tags=new (for latest jobs)
+ * 6. Page: ?page=number
  * 
  * Examples:
  * - location only: /jobs/in-Tegal
  * - location + category: /jobs/in-Tegal?classification=Akuntansi
  * - keyword + location: /jobs/in-Tegal?q=admin
+ * - latest jobs: /jobs/in-Indonesia?tags=new
  * 
  * @param {Object} params - Search parameters
  * @param {string} params.q - Keyword (job title or skill)
  * @param {string} params.location - Location (city or region) - PRIMARY
  * @param {string} params.category - Category/classification
+ * @param {string} params.tags - Tags filter (e.g., 'new' for latest jobs)
  * @param {number} params.page - Page number for pagination
  * @returns {string} JobStreet search URL
  */
 function buildJobStreetSearchURL(params = {}) {
-  const { q, location, category, page = 1 } = params;
+  const { q, location, category, tags, page = 1 } = params;
   
   // Base JobStreet URL
   let url = 'https://id.jobstreet.com/id/jobs';
@@ -98,6 +101,12 @@ function buildJobStreetSearchURL(params = {}) {
   }
   
   const queryParams = [];
+  
+  // Add tags filter (for latest jobs)
+  if (tags && tags.trim()) {
+    queryParams.push(`tags=${encodeURIComponent(tags.trim())}`);
+    console.log(`[URL Builder] Tags filter: ${tags}`);
+  }
   
   // Add keyword search
   if (q && q.trim()) {

@@ -9,13 +9,17 @@
  * URL: https://id.jobstreet.com/id/jobs
  */
 
-const { scrapeJobsFromURL } = require('../../utils/scraper');
+const scrapeJobs = require('../../utils/scraper');
+const { extractClassifications } = require('../../utils/scraper');
 
 module.exports = async (req, res) => {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  
+  // Cache for 15 minutes
+  res.setHeader('Cache-Control', 's-maxage=900, stale-while-revalidate');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -27,17 +31,19 @@ module.exports = async (req, res) => {
     console.log('=== ALL JOBS REQUEST ===');
     console.log('Page:', page);
 
-    // Build URL for all jobs
-    const baseUrl = 'https://id.jobstreet.com/id/jobs';
-    const params = new URLSearchParams({
-      page: page.toString()
-    });
-    const url = `${baseUrl}?${params.toString()}`;
+    // Use scrapeJobs with minimal parameters (no location, no keyword)
+    // This will scrape from general /id/jobs page
+    const searchParams = {
+      page: page
+    };
 
-    console.log('Scraping URL:', url);
+    console.log('Scraping with params:', searchParams);
 
-    // Scrape jobs from URL
-    const scrapedJobs = await scrapeJobsFromURL(url);
+    // Scrape jobs using existing logic
+    const scrapedJobs = await scrapeJobs(searchParams);
+    
+    // Extract classifications
+    const classifications = extractClassifications(scrapedJobs);
 
     console.log(`Found ${scrapedJobs.length} jobs`);
 
@@ -51,6 +57,7 @@ module.exports = async (req, res) => {
         type: 'all',
         scrapedAt: new Date().toISOString()
       },
+      classifications: classifications,
       jobs: scrapedJobs
     });
 
