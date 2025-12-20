@@ -328,31 +328,38 @@
                     </div>
                 </div>
 
-                <!-- Endpoint 2: Search & Filter Jobs (Updated) -->
+                <!-- Endpoint 2: Search & Filter Jobs (Production-Ready) -->
                 <div class="endpoint-card" onclick="window.open(getBaseUrl() + '/api/search?location=banten&classification=banking-financial-services', '_blank')">
                     <div class="endpoint-header">
                         <span class="method">GET</span>
                         <span class="endpoint-url">/api/search</span>
                     </div>
                     <div class="endpoint-desc">
-                        ✨ <strong>FLEXIBLE!</strong> Search jobs by location (required) & classification (optional) with pagination
+                        🔍 <strong>PRODUCTION-READY!</strong> Search jobs by location with auto-normalization
                     </div>
                     <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 5px; font-size: 0.85em;">
                         <strong>Query Parameters:</strong><br>
-                        • <code style="color: #667eea;">location</code> - Location slug (REQUIRED) - e.g., "banten", "jawa-tengah", "jakarta"<br>
-                        • <code style="color: #667eea;">classification</code> - Classification slug (optional) - e.g., "banking-financial-services", "information-technology"<br>
-                        • <code style="color: #667eea;">page</code> - Page number (default: 1)<br><br>
+                        • <code style="color: #667eea;">location</code> - <strong>REQUIRED</strong> - Any Indonesia region (auto-normalized)<br>
+                        &nbsp;&nbsp;Examples: "banten", "Jawa Tengah", "DI Yogyakarta"<br>
+                        • <code style="color: #667eea;">classification</code> - Optional job category slug<br>
+                        &nbsp;&nbsp;Examples: "banking-financial-services", "it-technology"<br>
+                        • <code style="color: #667eea;">page</code> - Page number (default: 1, min: 1)<br>
+                        • <code style="color: #667eea;">limit</code> - Results per page (default: 20, max: 30)<br><br>
+                        <strong>✅ Location Auto-Normalization:</strong><br>
+                        • "Jawa Tengah" → "jawa-tengah"<br>
+                        • "DI Yogyakarta" → "yogyakarta"<br>
+                        • "Nusa Tenggara Barat" → "nusa-tenggara-barat"<br>
+                        • Works for ALL Indonesia regions!<br><br>
                         <strong>Pagination:</strong><br>
-                        • Limit: 20 jobs per page<br>
-                        • Response includes <code style="color: #667eea;">hasNextPage</code> indicator<br>
+                        • Response includes <code style="color: #667eea;">hasNextPage</code><br>
                         • Perfect for infinite scroll<br><br>
-                        <strong>URL Patterns:</strong><br>
-                        • Location only: <code style="color: #667eea;">/jobs/in-{location}?page={page}</code><br>
-                        • Location + Classification: <code style="color: #667eea;">/jobs-in-{classification}/in-{location}?page={page}</code><br><br>
+                        <strong>🚫 Not Supported:</strong><br>
+                        • <code style="color: #dc3545;">sort</code>, <code style="color: #dc3545;">salary</code>, <code style="color: #dc3545;">posted</code> parameters<br>
+                        • Invalid params → 400 error (not 500)<br><br>
                         <strong>Examples:</strong><br>
                         <code style="color: #667eea;">/api/search?location=banten</code><br>
-                        <code style="color: #667eea;">/api/search?location=jawa-tengah&classification=information-technology</code><br>
-                        <code style="color: #667eea;">/api/search?location=jakarta&classification=banking-financial-services&page=2</code>
+                        <code style="color: #667eea;">/api/search?location=Jawa Tengah&classification=it-technology</code><br>
+                        <code style="color: #667eea;">/api/search?location=jakarta&page=2&limit=20</code>
                     </div>
                 </div>
 

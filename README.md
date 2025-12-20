@@ -161,18 +161,24 @@ GET /api/jobstreet?page=1&limit=20
 
 ### GET /api/search
 
-**Description**: Flexible search jobs by location and classification with pagination
+**Description**: Production-ready search by location with auto-normalization (Stable for Android App)
 
 **Query Parameters**:
-- `location` (string, **REQUIRED**): Location slug (e.g., "banten", "jawa-tengah", "jakarta")
-- `classification` (string, optional): Classification slug (e.g., "banking-financial-services", "information-technology")
-- `page` (number, optional): Page number (default: 1)
+- `location` (string, **REQUIRED**): Any Indonesia region (auto-normalized)
+- `classification` (string, optional): Job category slug (optional)
+- `page` (number, optional): Page number (default: 1, min: 1)
+- `limit` (number, optional): Results per page (default: 20, max: 30)
 
-**Pagination**:
-- **Limit**: 20 jobs per page (max 25)
-- **One page per request** (no loops, efficient scraping)
-- Response includes `hasNextPage` indicator for infinite scroll
-- Maps directly to JobStreet pagination
+**Location Auto-Normalization**:
+The API automatically normalizes location input to JobStreet slug format:
+- "Jawa Tengah" → "jawa-tengah"
+- "DI Yogyakarta" → "yogyakarta"
+- "Nusa Tenggara Barat" → "nusa-tenggara-barat"
+- "jakarta" → "jakarta"
+
+**Not Supported** (returns 400 error):
+- ❌ `sort`, `salary`, `posted` parameters
+- Use only the 4 valid parameters above
 
 **URL Patterns Generated**:
 1. Location only: `/jobs/in-{location}?page={page}`
@@ -181,43 +187,69 @@ GET /api/jobstreet?page=1&limit=20
 **Examples**:
 ```
 GET /api/search?location=banten
-GET /api/search?location=jawa-tengah&classification=information-technology&page=2
-GET /api/search?location=jakarta&classification=banking-financial-services&page=3
+GET /api/search?location=Jawa Tengah&classification=it-technology
+GET /api/search?location=jakarta&page=2&limit=20
 ```
 
-**Response**:
+**Success Response**:
 ```json
 {
+  "status": "success",
+  "statusCode": 200,
   "query": {
-    "location": "banten",
-    "classification": "banking-financial-services",
+    "location": "jawa-tengah",
+    "classification": "it-technology",
     "page": 1
   },
   "meta": {
     "limit": 20,
+    "total": 18,
     "hasNextPage": true,
     "scrapedAt": "2025-12-20T10:30:00.000Z"
   },
   "jobs": [
     {
-      "title": "Bank Teller",
-      "company": "Bank Mandiri",
-      "location": "Tangerang, Banten",
-      "classification": "Banking & Financial Services",
-      "salary": "Rp 5.000.000 - Rp 7.000.000",
-      "postedAgo": "2 hari yang lalu",
+      "title": "Software Engineer",
+      "company": "Tech Company",
+      "location": "Semarang, Jawa Tengah",
+      "classification": "IT & Technology",
+      "salary": "Rp 8.000.000 - Rp 12.000.000",
+      "badge": "Baru saja",
       "detailUrl": "https://id.jobstreet.com/id/job/..."
     }
   ]
 }
 ```
 
+**Error Responses**:
+
+Missing location:
+```json
+{
+  "status": "error",
+  "statusCode": 400,
+  "message": "Parameter \"location\" is required",
+  "examples": ["/api/search?location=banten"]
+}
+```
+
+Invalid parameters:
+```json
+{
+  "status": "error",
+  "statusCode": 400,
+  "message": "Invalid parameter(s): sort, salary",
+  "validParameters": ["location", "classification", "page", "limit"]
+}
+```
+
 **Key Features**:
-- ✅ Works with ALL Indonesia regions (no limitations)
-- ✅ Pagination support (perfect for infinite scroll)
-- ✅ Efficient: scrapes only one page per request
-- ✅ hasNextPage logic for better UX
-- ✅ Follows JobStreet URL structure exactly
+- ✅ Works with ALL Indonesia regions (34 provinces)
+- ✅ Auto-normalization (user-friendly input)
+- ✅ Proper error handling (400 for bad input, not 500)
+- ✅ Pagination with hasNextPage indicator
+- ✅ Ready for Android App integration
+- ✅ Follows JobStreet URL patterns exactly
 
 ---
 
