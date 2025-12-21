@@ -422,11 +422,36 @@ module.exports = async (req, res) => {
     const result = await scrapeJobs({ page: pageNum });
     
     // Handle new scraper response format {jobs, hasNextPage}
-    const jobs = result.jobs || result;
+    const scrapedJobs = result.jobs || result;
     const hasNextPage = result.hasNextPage !== undefined ? result.hasNextPage : false;
 
+    /**
+     * Extract jobId from JobStreet URL
+     * @param {string} url - JobStreet job URL
+     * @returns {string|null} Job ID or null
+     */
+    const extractJobId = (url) => {
+      if (!url) return null;
+      const match = url.match(/\/job\/(\d+)/);
+      return match ? match[1] : null;
+    };
+
+    // Transform jobs to include jobId
+    const jobs = Array.isArray(scrapedJobs) 
+      ? scrapedJobs.map(job => ({
+          jobId: extractJobId(job.source_url), // ✅ ADDED: jobId for new detail endpoint
+          title: job.job_title || 'N/A',
+          company: job.company || 'N/A',
+          location: job.location || 'Indonesia',
+          classification: job.category || 'General',
+          salary: job.salary_range || null,
+          postedLabel: job.posted_date || null,
+          applyUrl: job.source_url || null // For browser redirect only
+        }))
+      : [];
+
     // Apply limit
-    const limitedJobs = Array.isArray(jobs) ? jobs.slice(0, limitNum) : [];
+    const limitedJobs = jobs.slice(0, limitNum);
 
     // Success response
     return res.status(200).json({

@@ -192,17 +192,32 @@ module.exports = async (req, res) => {
 
     console.log(`[Search API] Scraped ${scrapedJobs.length} jobs. Has next: ${hasNextPage}`);
 
+    /**
+     * Extract jobId from JobStreet URL
+     * @param {string} url - JobStreet job URL
+     * @returns {string|null} Job ID or null
+     */
+    const extractJobId = (url) => {
+      if (!url) return null;
+      const match = url.match(/\/job\/(\d+)/);
+      return match ? match[1] : null;
+    };
+
     // STEP 6: Transform jobs to API format
     const jobs = Array.isArray(scrapedJobs) 
-      ? scrapedJobs.slice(0, limitNum).map(job => ({
-          title: job.job_title || 'N/A',
-          company: job.company || 'N/A',
-          location: job.location || normalizedLocation,
-          classification: job.category || 'General',
-          salary: job.salary_range || null,
-          badge: job.posted_date || null,
-          detailUrl: job.source_url || null
-        }))
+      ? scrapedJobs.slice(0, limitNum).map(job => {
+          const jobId = extractJobId(job.source_url);
+          return {
+            jobId: jobId, // ✅ ADDED: jobId for new detail endpoint
+            title: job.job_title || 'N/A',
+            company: job.company || 'N/A',
+            location: job.location || normalizedLocation,
+            classification: job.category || 'General',
+            salary: job.salary_range || null,
+            postedLabel: job.posted_date || null,
+            applyUrl: job.source_url || null // For browser redirect only
+          };
+        })
       : [];
 
     // STEP 7: Build consistent response
