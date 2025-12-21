@@ -283,7 +283,7 @@
                 <h2 style="color: #667eea; margin-bottom: 10px;">📊 API Statistics</h2>
                 <div class="stats-grid">
                     <div class="stat-item">
-                        <div class="stat-number">7</div>
+                        <div class="stat-number">8</div>
                         <div class="stat-label">Endpoints</div>
                     </div>
                     <div class="stat-item">
@@ -322,7 +322,8 @@
                         <strong>⚠️ Not Supported:</strong><br>
                         • <code style="color: #dc3545;">sort</code>, <code style="color: #dc3545;">salary</code>, <code style="color: #dc3545;">category</code>, <code style="color: #dc3545;">location</code>, <code style="color: #dc3545;">q</code><br>
                         • Use <code style="color: #667eea;">/api/search</code> for advanced filters<br>
-                        • Use <code style="color: #667eea;">/api/jobstreet</code> for recommendations<br><br>
+                        • Use <code style="color: #667eea;">/api/jobs/latest</code> for latest jobs<br>
+                        • Use <code style="color: #667eea;">/api/jobs/all</code> for all jobs with pagination<br><br>
                         <strong>Example:</strong><br>
                         <code style="color: #667eea;">/api/jobs?limit=20&page=1</code>
                     </div>
@@ -417,30 +418,71 @@
                     </div>
                 </div>
 
-                <h3 style="margin: 40px 0 15px 0; color: #667eea;">🌟 JobStreet Recommendations (NEW!)</h3>
+                <h3 style="margin: 40px 0 15px 0; color: #667eea;">🔥 Latest Jobs & All Jobs (Android Ready)</h3>
 
-                <!-- Endpoint 4: JobStreet Recommendations -->
-                <div class="endpoint-card" onclick="window.open(getBaseUrl() + '/api/jobstreet?page=1&limit=20', '_blank')">
+                <!-- Endpoint 4: Latest Jobs -->
+                <div class="endpoint-card" onclick="window.open(getBaseUrl() + '/api/jobs/latest', '_blank')">
                     <div class="endpoint-header">
                         <span class="method">GET</span>
-                        <span class="endpoint-url">/api/jobstreet</span>
+                        <span class="endpoint-url">/api/jobs/latest</span>
+                        <span style="background: #28a745; color: white; padding: 3px 10px; border-radius: 3px; font-size: 0.75em; font-weight: bold;">NEW</span>
                     </div>
                     <div class="endpoint-desc">
-                        🆕 <strong>NEW!</strong> Get recommended jobs dari JobStreet (fresh & up-to-date)
+                        🔥 <strong>Home Highlight!</strong> Get 5-8 latest jobs untuk Home screen (tanpa pagination)
                     </div>
                     <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 5px; font-size: 0.85em;">
                         <strong>Query Parameters:</strong><br>
-                        • <code style="color: #667eea;">page</code> - Page number (default: 1)<br>
-                        • <code style="color: #667eea;">limit</code> - Jobs per page (default: 20, max: 50)<br><br>
-                        <strong>Features:</strong><br>
-                        • 5-minute cache for faster response<br>
-                        • Includes salary info (when available)<br>
-                        • Job type & location details<br>
-                        • Direct link to job details<br><br>
-                        <strong>Example:</strong><br>
-                        <code style="color: #667eea;">/api/jobstreet?page=1&limit=20</code><br>
-                        <code style="color: #667eea;">/api/jobstreet?page=2&limit=50</code><br><br>
-                        <a href="test-jobstreet.html" target="_blank" style="color: #667eea; text-decoration: none;">🧪 Test UI →</a>
+                        • <code style="color: #667eea;">limit</code> - Number of jobs (default: 6, max: 8, optional)<br><br>
+                        <strong>Response Fields:</strong><br>
+                        • <code style="color: #667eea;">jobId</code> - Job ID (extracted from URL)<br>
+                        • <code style="color: #667eea;">title</code> - Job title<br>
+                        • <code style="color: #667eea;">company</code> - Company name<br>
+                        • <code style="color: #667eea;">location</code> - Job location<br>
+                        • <code style="color: #667eea;">classification</code> - Job category (nullable)<br>
+                        • <code style="color: #667eea;">salary</code> - Salary info (nullable)<br>
+                        • <code style="color: #667eea;">postedLabel</code> - Posted date (e.g., "2 hari lalu")<br>
+                        • <code style="color: #667eea;">applyUrl</code> - JobStreet URL untuk apply<br><br>
+                        <strong>✅ Features:</strong><br>
+                        • Maksimal 5-8 job saja<br>
+                        • TANPA pagination (perfect untuk Home Highlight)<br>
+                        • Cache 10 menit<br>
+                        • Error handling aman (tidak crash API)<br><br>
+                        <strong>Examples:</strong><br>
+                        <code style="color: #667eea;">/api/jobs/latest</code><br>
+                        <code style="color: #667eea;">/api/jobs/latest?limit=8</code>
+                    </div>
+                </div>
+
+                <!-- Endpoint 5: All Jobs (Infinite Scroll) -->
+                <div class="endpoint-card" onclick="window.open(getBaseUrl() + '/api/jobs/all?page=1', '_blank')">
+                    <div class="endpoint-header">
+                        <span class="method">GET</span>
+                        <span class="endpoint-url">/api/jobs/all</span>
+                        <span style="background: #28a745; color: white; padding: 3px 10px; border-radius: 3px; font-size: 0.75em; font-weight: bold;">NEW</span>
+                    </div>
+                    <div class="endpoint-desc">
+                        📜 <strong>Infinite Scroll!</strong> Get semua job Indonesia dengan pagination (cocok untuk scroll panjang Android)
+                    </div>
+                    <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 5px; font-size: 0.85em;">
+                        <strong>Query Parameters:</strong><br>
+                        • <code style="color: #667eea;">page</code> - Page number (default: 1, REQUIRED untuk pagination)<br>
+                        • <code style="color: #667eea;">limit</code> - Jobs per page (default: 20, max: 50, optional)<br><br>
+                        <strong>Response Fields:</strong><br>
+                        • <code style="color: #667eea;">jobs</code> - Array of job objects (same format as latest)<br>
+                        • <code style="color: #667eea;">meta</code> - Pagination metadata:<br>
+                        &nbsp;&nbsp;- <code style="color: #667eea;">page</code> - Current page<br>
+                        &nbsp;&nbsp;- <code style="color: #667eea;">limit</code> - Jobs per page<br>
+                        &nbsp;&nbsp;- <code style="color: #667eea;">hasNextPage</code> - Boolean untuk infinite scroll<br>
+                        &nbsp;&nbsp;- <code style="color: #667eea;">scrapedAt</code> - ISO timestamp<br><br>
+                        <strong>✅ Features:</strong><br>
+                        • Pagination WAJIB (page mulai dari 1)<br>
+                        • Default limit = 20 jobs per page<br>
+                        • Cocok untuk infinite scroll Android<br>
+                        • Cache 10 menit<br>
+                        • Error handling aman<br><br>
+                        <strong>Examples:</strong><br>
+                        <code style="color: #667eea;">/api/jobs/all?page=1</code><br>
+                        <code style="color: #667eea;">/api/jobs/all?page=2&limit=20</code>
                     </div>
                 </div>
 
@@ -527,10 +569,15 @@ fetch('<span class="base-url"></span>/api/search?location=jawa-tengah&classifica
   .then(res => res.json())
   .then(data => console.log(data.jobs));
 
-// JobStreet recommendations
-fetch('<span class="base-url"></span>/api/jobstreet?page=1&limit=20')
+// Latest jobs (Home Highlight)
+fetch('<span class="base-url"></span>/api/jobs/latest')
   .then(res => res.json())
-  .then(data => console.log(data.data));
+  .then(data => console.log(data.jobs));
+
+// All jobs with pagination (Infinite Scroll)
+fetch('<span class="base-url"></span>/api/jobs/all?page=1&limit=20')
+  .then(res => res.json())
+  .then(data => console.log(data.jobs, data.meta.hasNextPage));
 
 // Detail 1 job (NEW - Recommended)
 const jobId = '89023836'; // Extract from job list response
@@ -567,8 +614,11 @@ curl "<span class="base-url"></span>/api/search?location=banten"
 # Search with location + classification
 curl "<span class="base-url"></span>/api/search?location=jawa-tengah&classification=banking-financial-services"
 
-# JobStreet recommendations
-curl "<span class="base-url"></span>/api/jobstreet?page=1&limit=20"
+# Latest jobs (Home Highlight)
+curl "<span class="base-url"></span>/api/jobs/latest"
+
+# All jobs with pagination (Infinite Scroll)
+curl "<span class="base-url"></span>/api/jobs/all?page=1&limit=20"
 
 # Detail job (NEW - Recommended)
 curl "<span class="base-url"></span>/api/jobs/89023836"
@@ -603,9 +653,18 @@ response = requests.get('<span class="base-url"></span>/api/search', params={
 })
 jobs = response.json()['jobs']
 
-# JobStreet recommendations
-jobstreet = requests.get('<span class="base-url"></span>/api/jobstreet?page=1&limit=20')
-recommendations = jobstreet.json()['data']
+# Latest jobs (Home Highlight)
+latest = requests.get('<span class="base-url"></span>/api/jobs/latest')
+latest_jobs = latest.json()['jobs']
+
+# All jobs with pagination (Infinite Scroll)
+all_jobs = requests.get('<span class="base-url"></span>/api/jobs/all', params={
+    'page': 1,
+    'limit': 20
+})
+jobs_data = all_jobs.json()
+jobs = jobs_data['jobs']
+has_next = jobs_data['meta']['hasNextPage']
 
 # Detail job (NEW - Recommended)
 job_id = '89023836'  # Extract from job list response

@@ -342,7 +342,9 @@
  * 
  * Note: This endpoint does NOT support:
  * - sort, salary, category, location, q parameters
- * - For search/filter features, use /api/search or /api/jobstreet
+ * - For search/filter features, use /api/search
+ * - For latest jobs, use /api/jobs/latest
+ * - For all jobs with pagination, use /api/jobs/all
  * 
  * Purpose: Get recommended jobs for home screen (simple, no complex filters)
  * 
@@ -386,7 +388,7 @@ module.exports = async (req, res) => {
         statusCode: 400,
         message: `Invalid parameter(s): ${invalidParams.join(', ')}`,
         validParameters: VALID_PARAMS,
-        hint: 'For search/filter features, use /api/search or /api/jobstreet endpoints'
+        hint: 'For search/filter features, use /api/search. For latest jobs use /api/jobs/latest. For all jobs use /api/jobs/all'
       });
     }
 
