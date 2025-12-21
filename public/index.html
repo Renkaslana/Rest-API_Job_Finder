@@ -363,36 +363,57 @@
                     </div>
                 </div>
 
-                <!-- Endpoint 3: Job Detail -->
+                <!-- Endpoint 3: Job Detail (NEW - Recommended) -->
+                <div class="endpoint-card" onclick="window.open(getBaseUrl() + '/api/jobs/89023836', '_blank')">
+                    <div class="endpoint-header">
+                        <span class="method">GET</span>
+                        <span class="endpoint-url">/api/jobs/:jobId</span>
+                        <span style="background: #28a745; color: white; padding: 3px 10px; border-radius: 3px; font-size: 0.75em; font-weight: bold;">NEW</span>
+                    </div>
+                    <div class="endpoint-desc">
+                        📄 <strong>RECOMMENDED!</strong> Get FULL job detail menggunakan jobId (stabil & konsisten)
+                    </div>
+                    <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 5px; font-size: 0.85em;">
+                        <strong>Path Parameter:</strong><br>
+                        • <code style="color: #667eea;">jobId</code> - Job ID dari JobStreet (6-10 digit numeric, REQUIRED)<br><br>
+                        <strong>Response Fields:</strong><br>
+                        • <code style="color: #667eea;">jobId</code> - Job ID<br>
+                        • <code style="color: #667eea;">title</code> - Job position title<br>
+                        • <code style="color: #667eea;">company</code> - Company name<br>
+                        • <code style="color: #667eea;">location</code> - Job location<br>
+                        • <code style="color: #667eea;">salary</code> - Salary info (if available)<br>
+                        • <code style="color: #667eea;">postedLabel</code> - When the job was posted<br>
+                        • <code style="color: #667eea;">description</code> - Array of description paragraphs<br>
+                        • <code style="color: #667eea;">requirements</code> - Array of job requirements<br>
+                        • <code style="color: #667eea;">applyUrl</code> - JobStreet URL untuk apply<br><br>
+                        <strong>✅ Advantages:</strong><br>
+                        • Tidak perlu URL encoding<br>
+                        • jobId sederhana (string numeric)<br>
+                        • Error handling jelas (400/404/500)<br>
+                        • Lebih stabil & konsisten<br><br>
+                        <strong>Examples:</strong><br>
+                        <code style="color: #667eea;">/api/jobs/89023836</code><br>
+                        <code style="color: #667eea;">/api/jobs/75934159</code><br><br>
+                        💡 <strong>How to use:</strong> Extract <code style="color: #667eea;">jobId</code> dari response job list, lalu gunakan untuk detail
+                    </div>
+                </div>
+
+                <!-- Endpoint 3b: Job Detail (Legacy - Still Supported) -->
                 <div class="endpoint-card" onclick="alert('Copy job URL from search results and pass it as url parameter')">
                     <div class="endpoint-header">
                         <span class="method">GET</span>
                         <span class="endpoint-url">/api/job?url=&lt;jobstreet_url&gt;</span>
+                        <span style="background: #6c757d; color: white; padding: 3px 10px; border-radius: 3px; font-size: 0.75em; font-weight: bold;">LEGACY</span>
                     </div>
                     <div class="endpoint-desc">
-                        📄 Get FULL job detail dengan deskripsi lengkap dari JobStreet
+                        📄 Get FULL job detail dengan URL lengkap (masih didukung, tapi gunakan /api/jobs/:jobId untuk pengalaman lebih baik)
                     </div>
                     <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 5px; font-size: 0.85em;">
                         <strong>Query Parameters:</strong><br>
                         • <code style="color: #667eea;">url</code> - Full JobStreet job URL (REQUIRED, URL-encoded)<br><br>
-                        <strong>Response Fields:</strong><br>
-                        • <code style="color: #667eea;">job_title</code> - Job position title<br>
-                        • <code style="color: #667eea;">company</code> - Company name<br>
-                        • <code style="color: #667eea;">location</code> - Job location<br>
-                        • <code style="color: #667eea;">salary_range</code> - Salary info (if available)<br>
-                        • <code style="color: #667eea;">job_type</code> - Full-time, Part-time, Contract, etc.<br>
-                        • <code style="color: #667eea;">posted_date</code> - When the job was posted<br>
-                        • <code style="color: #667eea;">description</code> - Full job description (multi-paragraph)<br>
-                        • <code style="color: #667eea;">requirements</code> - List of job requirements<br>
-                        • <code style="color: #667eea;">source_url</code> - Original JobStreet URL<br><br>
-                        <strong>Features:</strong><br>
-                        • 15-minute cache for faster response<br>
-                        • Full description extraction (all paragraphs)<br>
-                        • Automatic requirements parsing<br>
-                        • Works with any JobStreet job URL<br><br>
+                        <strong>⚠️ Note:</strong> Endpoint ini masih berfungsi untuk backward compatibility, tapi disarankan menggunakan <code style="color: #667eea;">/api/jobs/:jobId</code> yang lebih stabil.<br><br>
                         <strong>Example:</strong><br>
-                        <code style="color: #667eea;">/api/job?url=https%3A%2F%2Fid.jobstreet.com%2Fid%2Fjob%2F75934159</code><br><br>
-                        💡 <strong>How to use:</strong> Get job URL from <code style="color: #667eea;">detailUrl</code> field in search results, then URL-encode it
+                        <code style="color: #667eea;">/api/job?url=https%3A%2F%2Fid.jobstreet.com%2Fid%2Fjob%2F75934159</code>
                     </div>
                 </div>
 
@@ -511,7 +532,13 @@ fetch('<span class="base-url"></span>/api/jobstreet?page=1&limit=20')
   .then(res => res.json())
   .then(data => console.log(data.data));
 
-// Detail 1 job
+// Detail 1 job (NEW - Recommended)
+const jobId = '89023836'; // Extract from job list response
+fetch(`<span class="base-url"></span>/api/jobs/${jobId}`)
+  .then(res => res.json())
+  .then(data => console.log(data));
+
+// Detail 1 job (Legacy - Still supported)
 const jobUrl = encodeURIComponent('https://id.jobstreet.com/id/job/12345678');
 fetch(`<span class="base-url"></span>/api/job?url=${jobUrl}`)
   .then(res => res.json())
@@ -543,7 +570,10 @@ curl "<span class="base-url"></span>/api/search?location=jawa-tengah&classificat
 # JobStreet recommendations
 curl "<span class="base-url"></span>/api/jobstreet?page=1&limit=20"
 
-# Detail job
+# Detail job (NEW - Recommended)
+curl "<span class="base-url"></span>/api/jobs/89023836"
+
+# Detail job (Legacy)
 curl "<span class="base-url"></span>/api/job?url=https%3A%2F%2Fid.jobstreet.com%2Fid%2Fjob%2F12345"
 
 # Articles list
@@ -577,7 +607,12 @@ jobs = response.json()['jobs']
 jobstreet = requests.get('<span class="base-url"></span>/api/jobstreet?page=1&limit=20')
 recommendations = jobstreet.json()['data']
 
-# Detail job
+# Detail job (NEW - Recommended)
+job_id = '89023836'  # Extract from job list response
+detail = requests.get(f'<span class="base-url"></span>/api/jobs/{job_id}')
+print(detail.json())
+
+# Detail job (Legacy)
 from urllib.parse import quote
 job_url = quote('https://id.jobstreet.com/id/job/12345678')
 detail = requests.get(f'<span class="base-url"></span>/api/job?url={job_url}')
@@ -601,21 +636,26 @@ print(article.json())</code></pre>
                     <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
                     <pre><code>{
   "status": "success",
-  "message": "Successfully scraped 30 jobs",
+  "statusCode": 200,
+  "message": "Successfully fetched 30 jobs",
   "data": {
     "jobs": [
       {
-        "job_title": "Senior Software Engineer",
+        "jobId": "89023836",
+        "title": "Senior Software Engineer",
         "company": "Tech Company Indonesia",
         "location": "Jakarta",
-        "posted_date": "2 days ago",
-        "description": "Preview singkat pekerjaan...",
-        "salary_range": "Rp 10.000.000 - Rp 15.000.000",
-        "source_url": "https://id.jobstreet.com/id/job/12345"
+        "classification": "IT & Teknologi",
+        "salary": "Rp 10.000.000 - Rp 15.000.000",
+        "postedLabel": "2 days ago",
+        "applyUrl": "https://id.jobstreet.com/id/job/89023836"
       }
     ],
     "metadata": {
       "total": 30,
+      "page": 1,
+      "limit": 30,
+      "hasNextPage": true,
       "scraping_method": "on-request",
       "cache_duration": "15 minutes"
     }
@@ -623,7 +663,37 @@ print(article.json())</code></pre>
 }</code></pre>
                 </div>
 
-                <h3 style="margin: 20px 0 10px 0;">Job Detail (/api/job)</h3>
+                <h3 style="margin: 20px 0 10px 0;">Job Detail (/api/jobs/:jobId) - NEW</h3>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <pre><code>{
+  "status": "success",
+  "statusCode": 200,
+  "message": "Job detail retrieved successfully",
+  "jobId": "89023836",
+  "title": "Senior Software Engineer",
+  "company": "Tech Company Indonesia",
+  "location": "Jakarta",
+  "classification": null,
+  "salary": "Rp 10.000.000 - Rp 15.000.000",
+  "postedLabel": "2 days ago",
+  "jobType": "Full time",
+  "description": [
+    "Memimpin tim development",
+    "Mengembangkan aplikasi web dan mobile",
+    "Memastikan kualitas code"
+  ],
+  "requirements": [
+    "Bachelor degree in Computer Science",
+    "5+ years experience in software development",
+    "Proficient in JavaScript and Python"
+  ],
+  "applyUrl": "https://id.jobstreet.com/id/job/89023836",
+  "updated_at": "2024-01-15T10:30:00.000Z"
+}</code></pre>
+                </div>
+
+                <h3 style="margin: 20px 0 10px 0;">Job Detail (/api/job?url=...) - Legacy</h3>
                 <div class="code-block">
                     <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
                     <pre><code>{
